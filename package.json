@@ -12,7 +12,7 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "deploy": "npm run build && node ./deploy"
+    "deploy": "npm run build && gh-pages -d public -b master -r git@github.com:PreritO/prerito.github.io.git"
   },
   "dependencies": {
     "@mdx-js/react": "^2.2.1",

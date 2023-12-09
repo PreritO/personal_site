@@ -10,23 +10,23 @@ const IndexPage = () => (
         <div className="column is-one-sixth"> </div>
           <div className="column is-three-fifths"> 
               <div style={{ margin: `0 auto`, textAlign: 'left'}}>
-                <h1 className="title"> Hi, I'm Prerit. </h1>
+                <h1 className="title"> Hi, I'm Prerit! </h1>
               </div>
               <div style={{ margin: `0 auto`, textAlign: 'left'}}>
                 <p>
-                  I currently live in Seattle and work at Microsoft. I grew up in Colorado and previously studied at CU Boulder and UIUC. 
+                  I currently live in Seattle and work at Microsoft. I grew up in Colorado and studied at CU Boulder and UIUC. 
                 </p>
               </div>
               <div style={{ margin: `0 auto`, textAlign: 'left'}}>
                 <p>
-                  Things I find interesting:
-                  <ul>
+                  Check out some of my <a href="/posts"> writing</a> and see what books are on my <a href="/bookshelf">bookshelf</a>!
+                  {/* <ul>
                     <li><b>Volunteering: </b>Microsoft TEALS volunteering at Pickney High School (based in Michigan)</li>
                     <li><b>Entrepreneurship: </b>Forver trying to launch and build various products</li>
-                  </ul>
+                  </ul> */}
                 </p>
               </div>
-              <div style={{ margin: `0 auto`, textAlign: 'left'}}>
+              {/* <div style={{ margin: `0 auto`, textAlign: 'left'}}>
                 <p>
                   Contact:
                 </p>
@@ -34,7 +34,7 @@ const IndexPage = () => (
                     <li><b>Twitter: </b><a href="https://twitter.com/ThePreritOberai">@ThePreritOberai</a> </li>
                     <li><b>GitHub: </b><a href="https://github.com/PreritO">@PreritO</a></li>
                   </ul>
-              </div>
+              </div> */}
           </div>
         <div className="column is-one-sixth"></div>
       </div>
