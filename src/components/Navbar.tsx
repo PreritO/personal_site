@@ -20,7 +20,7 @@ export default function Navbar() {
         </Link>
         <Link 
           href="/posts" 
-          className={`nav-link ${pathname === '/posts' ? 'active' : ''}`}
+          className={`nav-link ${pathname.startsWith('/posts') ? 'active' : ''}`}
         >
           Posts
         </Link>

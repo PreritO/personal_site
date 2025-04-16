@@ -2,6 +2,7 @@ import { getAllPosts, getPostBySlug } from '@/lib/markdown'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Tag } from 'lucide-react'
+import { Metadata } from 'next'
 
 // Helper function for consistent date formatting
 function formatDate(date: string) {
@@ -23,6 +24,13 @@ export async function generateStaticParams() {
 type Props = {
   params: {
     slug: string
+  }
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug)
+  return {
+    title: `${post.title} | Prerit Oberai`,
   }
 }
 

@@ -189,7 +189,6 @@ a:focus {
 /* Post page styles */
 .post-header {
   margin-bottom: 4rem;
-  padding-bottom: 2rem;
   border-bottom: 1px solid var(--border);
 }
 
