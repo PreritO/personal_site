@@ -39,9 +39,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 0.5rem;
+  padding: 2rem 0;
   max-width: 42rem;
-  margin: 0 0 -4rem;
+  margin: 0 auto;
 }
 
 .nav-links {
@@ -55,7 +55,6 @@ body {
   opacity: 0.9;
   transition: opacity 0.2s ease;
   text-decoration: none;
-  padding: 0.5rem 1rem;
   color: inherit;
 }
 
@@ -75,6 +74,7 @@ body {
   padding: 0.5rem;
   opacity: 0.9;
   transition: opacity 0.2s ease;
+  margin-right: 1rem;
 }
 
 .theme-toggle:hover {
@@ -90,7 +90,7 @@ body {
 .container {
   max-width: 42rem;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  /* padding: 2rem 1rem; */
 }
 
 .site-header {
