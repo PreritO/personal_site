@@ -129,6 +129,7 @@ body {
 .social-link {
   opacity: 0.9;
   transition: opacity 0.2s ease;
+  color: var(--foreground);
 }
 
 .social-link:hover {
@@ -138,6 +139,7 @@ body {
 .social-icon {
   width: 2rem;
   height: 2rem;
+  color: inherit;
 }
 
 /* Posts page styles */
@@ -231,11 +233,13 @@ a:focus {
 
 .post-tag {
   background-color: var(--card);
+  color: var(--foreground);
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.875rem;
   opacity: 0.8;
   transition: opacity 0.2s ease;
+  border: 1px solid var(--border);
 }
 
 .post-tag:hover {
