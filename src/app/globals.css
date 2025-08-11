@@ -268,3 +268,131 @@ a:focus {
   margin-top: 2.5rem;
   margin-bottom: 1rem;
 }
+
+/* Books page styles */
+.books-header, .thoughts-header {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.books-intro, .thoughts-intro {
+  color: var(--secondary);
+  margin-bottom: 2rem;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.book-card {
+  background-color: var(--card);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.book-card:hover {
+  background-color: var(--card-hover);
+  transform: translateY(-2px);
+}
+
+.book-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.book-author {
+  color: var(--secondary);
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.book-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.book-date {
+  color: var(--secondary);
+  font-size: 0.8rem;
+}
+
+.book-rating {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star-icon {
+  color: #eab308;
+}
+
+.book-notes {
+  font-size: 0.9rem;
+  color: var(--secondary);
+}
+
+/* Thoughts page styles */
+.thoughts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.thought-item {
+  background-color: var(--card);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+}
+
+.thought-content {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.thought-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.thought-date {
+  color: var(--secondary);
+  font-size: 0.8rem;
+}
+
+.thought-tags {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.thought-tags-label {
+  color: var(--secondary);
+}
+
+.thought-tag {
+  background-color: var(--background);
+  border-radius: 0.25rem;
+  color: var(--secondary);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.thought-tag:hover {
+  background-color: var(--primary);
+  color: white;
+}

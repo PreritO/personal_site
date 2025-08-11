@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { Post } from '@/lib/markdown'
+import { BlogPost } from '@/lib/notion'
 import { useSearchParams } from 'next/navigation'
 
 interface PostsListProps {
-  posts: Post[]
+  posts: BlogPost[]
   selectedTag?: string
 }
 

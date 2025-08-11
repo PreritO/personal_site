@@ -24,6 +24,18 @@ export default function Navbar() {
         >
           Posts
         </Link>
+        <Link 
+          href="/books" 
+          className={`nav-link ${pathname.startsWith('/books') ? 'active' : ''}`}
+        >
+          Books
+        </Link>
+        <Link 
+          href="/thoughts" 
+          className={`nav-link ${pathname.startsWith('/thoughts') ? 'active' : ''}`}
+        >
+          Thoughts
+        </Link>
       </div>
       {/* <button
         onClick={toggleTheme}

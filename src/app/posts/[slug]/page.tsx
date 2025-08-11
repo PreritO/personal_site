@@ -1,4 +1,4 @@
-import { getAllPosts, getPostBySlug } from '@/lib/markdown'
+import { getAllPosts, getPostBySlug } from '@/lib/notion'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Tag } from 'lucide-react'
@@ -14,8 +14,10 @@ function formatDate(date: string) {
   return `${months[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`
 }
 
+export const revalidate = 3600; // Revalidate every hour
+
 export async function generateStaticParams() {
-  const posts = getAllPosts()
+  const posts = await getAllPosts()
   return posts.map((post) => ({
     slug: post.slug,
   }))
@@ -29,6 +31,13 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(params.slug)
+  
+  if (!post) {
+    return {
+      title: 'Post Not Found | Prerit Oberai',
+    }
+  }
+  
   return {
     title: `${post.title} | Prerit Oberai`,
   }
@@ -39,6 +48,10 @@ export default async function PostPage({ params }: Props) {
 
   try {
     const post = await getPostBySlug(slug)
+    
+    if (!post) {
+      notFound()
+    }
 
     return (
       <article className="container">
