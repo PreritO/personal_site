@@ -59,28 +59,28 @@ export default async function PostPage({ params }: Props) {
           <h1 className="post-title">{post.title}</h1>
           <div className="post-meta">
             <time className="post-date">{formatDate(post.date)}</time>
-            {post.tags.length > 0 && (
+            {post.categories.length > 0 && (
               <div className="post-tags">
                 <span className="post-tags-label">
                   <Tag size={16} />
                 </span>
-                {post.tags.map((tag) => (
+                {post.categories.map((category) => (
                   <Link 
-                    key={tag} 
-                    href={`/posts?tag=${tag}`}
+                    key={category} 
+                    href={`/posts?tag=${category}`}
                     className="post-tag"
                   >
-                    {tag}
+                    {category}
                   </Link>
                 ))}
               </div>
             )}
           </div>
         </header>
-        <div 
+        {/* <div 
           className="post-content prose dark:prose-invert max-w-none"
           dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        /> */}
       </article>
     )
   } catch (error) {

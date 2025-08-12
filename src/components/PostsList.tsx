@@ -14,9 +14,9 @@ export default function PostsList({ posts, selectedTag }: PostsListProps) {
   const tag = searchParams.get('tag')
   
   const filteredPosts = selectedTag 
-    ? posts.filter(post => post.tags.includes(selectedTag))
+    ? posts.filter(post => post.categories.includes(selectedTag))
     : tag 
-      ? posts.filter(post => post.tags.includes(tag))
+      ? posts.filter(post => post.categories.includes(tag))
       : posts
 
   return (
