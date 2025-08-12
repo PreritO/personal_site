@@ -77,10 +77,10 @@ export default async function PostPage({ params }: Props) {
             )}
           </div>
         </header>
-        {/* <div 
+        <div 
           className="post-content prose dark:prose-invert max-w-none"
           dangerouslySetInnerHTML={{ __html: post.content }}
-        /> */}
+        />
       </article>
     )
   } catch (error) {

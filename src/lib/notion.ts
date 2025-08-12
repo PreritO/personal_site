@@ -24,7 +24,7 @@ export type BlogPost = {
   title: string;
   slug: string;
   date: string;
-  tags: string[];
+  categories: string[];
   content: string;
   status: string;
 };
@@ -72,52 +72,55 @@ export async function notionBlocksToHtml(pageId: string): Promise<string> {
 export async function getAllPosts(): Promise<BlogPost[]> {
   const blogDatabaseId = process.env.NOTION_BLOG_DATABASE_ID as string;
   
+  console.log("Fetching blog posts from database ID:", blogDatabaseId);
+
+  // First, let's fetch the database to inspect its structure
   try {
-    // First, let's fetch the database to inspect its structure
     const databaseInfo = await notion.databases.retrieve({
       database_id: blogDatabaseId,
     });
     
-    console.log("Database properties:", JSON.stringify(databaseInfo.properties, null, 2));
-    
-    // Query with no filters first to debug
-    const response = await notion.databases.query({
-      database_id: blogDatabaseId,
-      sorts: [
-        {
-          property: "Date",
-          direction: "descending",
-        },
-      ],
-    });
-
-    console.log(`Found ${response.results.length} posts total`);
-
-    const posts = await Promise.all(
-      response.results.map(async (page) => {
-        // Type assertion to ensure we're working with a PageObjectResponse
-        const pageObj = page as PageObjectResponse;
-        const properties = pageObj.properties as any;
-        
-        console.log("Post properties:", JSON.stringify(properties, null, 2));
-        
-        return {
-          id: pageObj.id,
-          slug: properties.Slug?.rich_text?.[0]?.plain_text || pageObj.id,
-          title: properties.Title?.title?.[0]?.plain_text || "Untitled",
-          date: properties.Date?.date?.start || new Date().toISOString(),
-          tags: properties.Tags?.multi_select?.map((tag: any) => tag.name) || [],
-          content: "", // We'll fetch this separately when needed
-          status: properties.Status?.select?.name || "Draft",
-        };
-      })
-    );
-
-    return posts;
+    console.log("Database properties:", Object.keys(databaseInfo.properties));
   } catch (error) {
-    console.error("Error fetching posts:", error);
-    return [];
+    console.error("Error retrieving database info:", error);
   }
+
+  // Let's try without a filter first to see if we can get any posts
+  const response = await notion.databases.query({
+    database_id: blogDatabaseId,
+    sorts: [
+      {
+        property: "Date",
+        direction: "descending",
+      },
+    ],
+  });
+  
+  console.log(`Found ${response.results.length} posts total`);
+
+  const posts = await Promise.all(
+    response.results.map(async (page) => {
+      // Type assertion to ensure we're working with a PageObjectResponse
+      const pageObj = page as PageObjectResponse;
+      const properties = pageObj.properties as any;
+      
+      console.log("Post property names:", Object.keys(properties));
+      console.log("Status property type:", properties.Status?.type);
+      console.log("Status property value:", JSON.stringify(properties.Status, null, 2));
+      
+      return {
+        id: pageObj.id,
+        slug: properties.Slug.rich_text[0]?.plain_text || "",
+        title: properties.Title.title[0]?.plain_text || "Untitled",
+        date: properties.Date.date?.start || "",
+        categories: properties.Categories.multi_select.map((category: any) => category.name),
+        content: "", // We'll fetch this separately when needed
+        status: properties.Status?.status?.name || properties.Status?.select?.name || "Unknown",
+      };
+    })
+  );
+
+  return posts;
 }
 
 /**
@@ -153,9 +156,9 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
       slug: properties.Slug?.rich_text?.[0]?.plain_text || "",
       title: properties.Title?.title?.[0]?.plain_text || "Untitled",
       date: properties.Date?.date?.start || "",
-      tags: properties.Tags?.multi_select?.map((tag: any) => tag.name) || [],
+      categories: properties.Categories?.multi_select?.map((category: any) => category.name) || [],
       content,
-      status: properties.Status?.select?.name || "Draft",
+      status: properties.Status?.status?.name || properties.Status?.select?.name || "Unknown",
     };
   } catch (error) {
     console.error("Error fetching post by slug:", error);
