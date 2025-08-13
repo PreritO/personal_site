@@ -33,6 +33,7 @@ export type Book = {
   id: string;
   title: string;
   author: string;
+  url?: string;
   dateFinished: string;
   rating?: number;
   notes: string;
@@ -183,7 +184,7 @@ export async function getAllBooks(): Promise<Book[]> {
     const response = await notion.databases.query({
       database_id: booksDatabaseId,
       filter: {
-        property: "Public?",
+        property: "Public",
         checkbox: {
           equals: true,
         },
@@ -208,10 +209,11 @@ export async function getAllBooks(): Promise<Book[]> {
           id: pageObj.id,
           title: properties.Title?.title?.[0]?.plain_text || "Untitled",
           author: properties.Author?.rich_text?.[0]?.plain_text || "",
+          url: properties.Url?.url || "",
           dateFinished: properties["Date Finished"]?.date?.start || "",
           rating: properties.Rating?.number,
           notes: properties.Notes?.rich_text?.[0]?.plain_text || "",
-          isPublic: properties["Public?"]?.checkbox || false,
+          isPublic: properties["Public"]?.checkbox || false,
         };
       })
     );
@@ -240,7 +242,7 @@ export async function getAllThoughts(): Promise<Thought[]> {
     const response = await notion.databases.query({
       database_id: thoughtsDatabaseId,
       filter: {
-        property: "Public?",
+        property: "Public",
         checkbox: {
           equals: true,
         },
@@ -266,7 +268,7 @@ export async function getAllThoughts(): Promise<Thought[]> {
           content: properties.Content?.title?.[0]?.plain_text || "",
           date: properties.Date?.date?.start || "",
           tags: properties.Tags?.multi_select?.map((tag: any) => tag.name) || [],
-          isPublic: properties["Public?"]?.checkbox || false,
+          isPublic: properties["Public"]?.checkbox || false,
         };
       })
     );

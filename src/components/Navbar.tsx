@@ -28,13 +28,13 @@ export default function Navbar() {
           href="/books" 
           className={`nav-link ${pathname.startsWith('/books') ? 'active' : ''}`}
         >
-          Books
+          Bookshelf
         </Link>
         <Link 
           href="/thoughts" 
           className={`nav-link ${pathname.startsWith('/thoughts') ? 'active' : ''}`}
         >
-          Thoughts
+          Random Thoughts
         </Link>
       </div>
       {/* <button

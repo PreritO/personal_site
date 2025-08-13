@@ -1,6 +1,7 @@
 import { getAllBooks } from '@/lib/notion'
 import { Metadata } from 'next'
 import BooksList from '@/components/BooksList'
+import './styles.css'
 
 export const metadata: Metadata = {
   title: 'Books | Prerit Oberai',
