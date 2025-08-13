@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   images: {
-    unoptimized: true,
+    domains: ['www.notion.so', 'notion.so', 's3.us-west-2.amazonaws.com'],
   },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig
