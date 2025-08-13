@@ -18,7 +18,7 @@ export default async function BooksPage() {
       <h1 className="books-header">Books I've Read</h1>
       <div className="books-intro">
         <p>
-          Here's a collection of books I've read recently, along with some thoughts and ratings.
+          Here's a collection of books I've read recently, along with links so you can check them out.
         </p>
       </div>
       <BooksList books={books} />

@@ -32,8 +32,6 @@ export default function BooksList({ books }: BooksListProps) {
         <div key={book.id} className="book-item">
           <div className="book-main">
             <strong className="book-title">{book.title}</strong>
-            <span className="book-separator"> - </span>
-            <span className="book-author">{book.author}</span>
             {book.url && (
               <a 
                 href={book.url} 
@@ -46,7 +44,6 @@ export default function BooksList({ books }: BooksListProps) {
               </a>
             )}
           </div>
-          <RenderRating rating={book.rating} />
         </div>
       ))}
     </div>

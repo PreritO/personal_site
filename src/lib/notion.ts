@@ -40,14 +40,6 @@ export type Book = {
   isPublic: boolean;
 };
 
-export type Thought = {
-  id: string;
-  content: string;
-  date: string;
-  tags: string[];
-  isPublic: boolean;
-};
-
 /**
  * Converts Notion blocks to HTML content
  */
@@ -226,56 +218,63 @@ export async function getAllBooks(): Promise<Book[]> {
 }
 
 /**
- * Gets all public thoughts
+ * Gets all  thoughts
  */
-export async function getAllThoughts(): Promise<Thought[]> {
-  const thoughtsDatabaseId = process.env.NOTION_THOUGHTS_DATABASE_ID as string;
+// Add this to src/lib/notion.ts
+
+export async function getThoughtsPage() {
+  // Replace with your actual Notion page ID
+  const pageId = process.env.NOTION_THOUGHTS_PAGE_ID;
   
-  try {
-    // First, let's fetch the database to inspect its structure
-    const databaseInfo = await notion.databases.retrieve({
-      database_id: thoughtsDatabaseId,
-    });
-    
-    console.log("Thoughts database properties:", JSON.stringify(databaseInfo.properties, null, 2));
-    
-    const response = await notion.databases.query({
-      database_id: thoughtsDatabaseId,
-      filter: {
-        property: "Public",
-        checkbox: {
-          equals: true,
-        },
-      },
-      sorts: [
-        {
-          property: "Date",
-          direction: "descending",
-        },
-      ],
-    });
-
-    console.log(`Found ${response.results.length} thoughts total`);
-
-    const thoughts = await Promise.all(
-      response.results.map(async (page) => {
-        // Type assertion to ensure we're working with a PageObjectResponse
-        const pageObj = page as PageObjectResponse;
-        const properties = pageObj.properties as any;
-        
-        return {
-          id: pageObj.id,
-          content: properties.Content?.title?.[0]?.plain_text || "",
-          date: properties.Date?.date?.start || "",
-          tags: properties.Tags?.multi_select?.map((tag: any) => tag.name) || [],
-          isPublic: properties["Public"]?.checkbox || false,
-        };
-      })
-    );
-
-    return thoughts;
-  } catch (error) {
-    console.error("Error fetching thoughts:", error);
-    return [];
+  if (!pageId) {
+    console.error("Missing NOTION_THOUGHTS_PAGE_ID environment variable");
+    return { blocks: [] };
   }
+
+  try {
+    // Fetch all blocks from the page
+    const blocks = await notion.blocks.children.list({
+      block_id: pageId,
+    });
+
+    // Process the blocks to extract the bulleted list items
+    const thoughts = processThoughtBlocks(blocks.results);
+    
+    return { 
+      blocks: thoughts,
+      lastEditedTime: new Date().toISOString() // We could fetch page metadata for this
+    };
+  } catch (error) {
+    console.error("Error fetching thoughts page:", error);
+    return { blocks: [] };
+  }
+}
+
+// Helper function to process blocks and extract bulleted list items
+function processThoughtBlocks(blocks: any[]) {
+  const thoughts = [];
+  
+  for (const block of blocks) {
+    // Process bulleted list items
+    if (block.type === 'bulleted_list_item') {
+      const content = block.bulleted_list_item.rich_text.map((text: any) => text.plain_text).join('');
+      
+      // Basic thought item
+      const thought = {
+        id: block.id,
+        content,
+        hasChildren: block.has_children,
+        children: []
+      };
+      
+      // If this is a toggle, we'll need to fetch its children separately
+      if (block.has_children) {
+        // We'd ideally fetch children here, but we'll handle this later
+      }
+      
+      thoughts.push(thought);
+    }
+  }
+  
+  return thoughts;
 }
