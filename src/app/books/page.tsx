@@ -7,8 +7,9 @@ export const metadata: Metadata = {
   title: 'Books | Prerit Oberai',
 }
 
-// Revalidate once per day
-export const revalidate = 86400;
+// Use environment variable for revalidation time with fallback
+export const revalidate = process.env.REVALIDATION_TIME_BOOKS ? 
+  parseInt(process.env.REVALIDATION_TIME_BOOKS) : 86400;
 
 export default async function BooksPage() {
   const books = await getAllBooks()

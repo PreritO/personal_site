@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   title: 'Posts | Prerit Oberai',
 }
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = process.env.REVALIDATION_TIME_BLOG ? 
+  parseInt(process.env.REVALIDATION_TIME_BLOG) : 3600; // Fallback to 1 hour
 
 export default async function PostsPage() {
   const posts = await getAllPosts()

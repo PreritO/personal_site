@@ -14,7 +14,8 @@ function formatDate(date: string) {
   return `${months[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`
 }
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = process.env.REVALIDATION_TIME_BLOG ? 
+  parseInt(process.env.REVALIDATION_TIME_BLOG) : 3600; // Fallback to 1 hour
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()

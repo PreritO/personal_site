@@ -23,4 +23,5 @@ export default async function ThoughtsPage() {
   );
 }
 
-export const revalidate = 600; // Revalidate every 10 minutes
+export const revalidate = process.env.REVALIDATION_TIME_THOUGHTS ? 
+  parseInt(process.env.REVALIDATION_TIME_THOUGHTS) : 600; // Fallback to 10 minutes
