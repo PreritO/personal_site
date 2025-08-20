@@ -9,10 +9,15 @@ export const metadata: Metadata = {
 
 export default async function ThoughtsPage() {
   const { blocks: thoughts } = await getThoughtsPage();
+  const generatedAt = new Date().toISOString();
   
   return (
     <div className="container">
       <h1 className="thoughts-header">Random Thoughts</h1>
+      {/* Debug timestamp - remove this later */}
+      <div className="text-xs text-gray-500 mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded">
+        🔧 Debug: Page generated at {generatedAt}
+      </div>
       <div className="thoughts-intro">
         <p>
           A twitter feed without all the bells and whistles.
@@ -23,5 +28,4 @@ export default async function ThoughtsPage() {
   );
 }
 
-export const revalidate = process.env.REVALIDATION_TIME_THOUGHTS ? 
-  parseInt(process.env.REVALIDATION_TIME_THOUGHTS) : 600; // Fallback to 10 minutes
+export const revalidate = 1800; // 30 minutes for testing instead of using env var
