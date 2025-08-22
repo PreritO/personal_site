@@ -226,26 +226,40 @@ export async function getThoughtsPage() {
   // Replace with your actual Notion page ID
   const pageId = process.env.NOTION_THOUGHTS_PAGE_ID;
   
+  console.log("🔍 getThoughtsPage called with pageId:", pageId);
+  
   if (!pageId) {
-    console.error("Missing NOTION_THOUGHTS_PAGE_ID environment variable");
+    console.error("❌ Missing NOTION_THOUGHTS_PAGE_ID environment variable");
     return { blocks: [] };
   }
 
   try {
+    console.log("📡 Fetching blocks from Notion page...");
     // Fetch all blocks from the page
     const blocks = await notion.blocks.children.list({
       block_id: pageId,
     });
 
+    console.log(`✅ Retrieved ${blocks.results.length} blocks from Notion`);
+
     // Process the blocks to extract the bulleted list items
     const thoughts = processThoughtBlocks(blocks.results);
+    
+    console.log(`📝 Processed ${thoughts.length} thoughts`);
     
     return { 
       blocks: thoughts,
       lastEditedTime: new Date().toISOString() // We could fetch page metadata for this
     };
   } catch (error) {
-    console.error("Error fetching thoughts page:", error);
+    console.error("❌ Error fetching thoughts page:", error);
+    if (error instanceof Error) {
+      console.error("❌ Error details:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+    }
     return { blocks: [] };
   }
 }

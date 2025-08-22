@@ -8,7 +8,18 @@ export const metadata: Metadata = {
 }
 
 export default async function ThoughtsPage() {
-  const { blocks: thoughts } = await getThoughtsPage();
+  let thoughts: any[] = [];
+  let error: string | null = null;
+  
+  try {
+    const result = await getThoughtsPage();
+    thoughts = result.blocks;
+    console.log("🎯 Thoughts page: Successfully fetched", thoughts.length, "thoughts");
+  } catch (e) {
+    error = e instanceof Error ? e.message : 'Unknown error';
+    console.error("🎯 Thoughts page: Failed to fetch thoughts:", error);
+  }
+  
   const generatedAt = new Date().toISOString();
   
   return (
@@ -17,6 +28,9 @@ export default async function ThoughtsPage() {
       {/* Debug timestamp - remove this later */}
       <div className="text-xs text-gray-500 mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded">
         🔧 Debug: Page generated at {generatedAt}
+        <br />
+        📊 Thoughts count: {thoughts.length}
+        {error && <><br />❌ Error: {error}</>}
       </div>
       <div className="thoughts-intro">
         <p>
