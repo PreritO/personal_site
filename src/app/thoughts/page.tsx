@@ -42,4 +42,6 @@ export default async function ThoughtsPage() {
   );
 }
 
-export const revalidate = 1800; // 30 minutes for testing instead of using env var
+// Use environment variable for revalidation time with fallback
+export const revalidate = process.env.REVALIDATION_TIME_THOUGHTS ? 
+  parseInt(process.env.REVALIDATION_TIME_THOUGHTS) : 600;
