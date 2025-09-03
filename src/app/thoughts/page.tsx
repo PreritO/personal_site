@@ -27,14 +27,18 @@ export default async function ThoughtsPage() {
       <h1 className="thoughts-header">Random Thoughts</h1>
       {/* Debug timestamp - remove this later */}
       <div className="text-xs text-gray-500 mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded">
-        🔧 Debug: Page generated at {generatedAt}
         <br />
-        📊 Thoughts count: {thoughts.length}
-        {error && <><br />Error: {error}</>}
+        {error && <><br />Error Loading Thoughts: {error}</>}
       </div>
       <div className="thoughts-intro">
         <p>
-          A twitter feed without all the bells and whistles.
+          A twitter feed without all the bells and whistles. Last Updated {new Date(generatedAt).toLocaleDateString('en-US', { 
+            month: 'short', 
+            year: 'numeric', 
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          })}
         </p>
       </div>
       <ThoughtsList thoughts={thoughts} />
