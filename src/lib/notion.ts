@@ -229,7 +229,7 @@ export async function getThoughtsPage() {
   console.log("getThoughtsPage called with pageId:", pageId);
   
   if (!pageId) {
-    console.error("❌ Missing NOTION_THOUGHTS_PAGE_ID environment variable");
+    console.error("Missing NOTION_THOUGHTS_PAGE_ID environment variable");
     return { blocks: [] };
   }
 
@@ -244,11 +244,14 @@ export async function getThoughtsPage() {
 
     // Process the blocks to extract the bulleted list items
     const thoughts = processThoughtBlocks(blocks.results);
+
+    // Reverse the array because most recent thoughts appear at the bottom and we want to appear at the top
+    const reversedThoughts = thoughts.reverse();
     
-    console.log(`Processed ${thoughts.length} thoughts`);
-    
-    return { 
-      blocks: thoughts,
+    console.log(`Processed ${reversedThoughts.length} thoughts`);
+
+    return {
+      blocks: reversedThoughts,
       lastEditedTime: new Date().toISOString() // We could fetch page metadata for this
     };
   } catch (error) {
