@@ -30,7 +30,7 @@ export default async function ThoughtsPage() {
         🔧 Debug: Page generated at {generatedAt}
         <br />
         📊 Thoughts count: {thoughts.length}
-        {error && <><br />❌ Error: {error}</>}
+        {error && <><br />Error: {error}</>}
       </div>
       <div className="thoughts-intro">
         <p>
