@@ -78,9 +78,15 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     console.error("Error retrieving database info:", error);
   }
 
-  // Let's try without a filter first to see if we can get any posts
+  // Query the database with a filter for "Done" status
   const response = await notion.databases.query({
     database_id: blogDatabaseId,
+    filter: {
+      property: "Status",
+      status: {
+        equals: "Done"
+      }
+    },
     sorts: [
       {
         property: "Date",
@@ -89,7 +95,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     ],
   });
   
-  console.log(`Found ${response.results.length} posts total`);
+  console.log(`Found ${response.results.length} posts with "Done" status`);
 
   const posts = await Promise.all(
     response.results.map(async (page) => {
