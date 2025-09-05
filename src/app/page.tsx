@@ -10,7 +10,7 @@ export default function Home() {
         I live in New York and I currently work at Microsoft on the Office Security Team as a SWE. Before that, I was on the Excel team for 3 years (in Seattle) and prior to that, I studied EECS at CU Boulder for both my undergrad and masters. I'm excited about the potential of technology to improve people's lives and enjoy building high quality software that can scale quickly.
         </p>
         <p className="site-description">
-          I love to learn how things work generally and am fascinated by how businesses scale to millions. Outside of my nerdy musings, I like playing basketball, running and generally reading biographies. If you have any recs, please send them my way. My vision for a successful life entails doing meaningful work that brings you joy, surrounding yourself with people who care for you while developing relationships that allow you to grow. 
+          I love to learn how things work generally and am fascinated by how businesses scale to millions. Outside of my nerdy musings, I like playing basketball, running and generally reading biographies. If you have any recs, please send them my way. My vision for a successful life entails doing meaningful work that brings me joy, surrounding myself with people who care for me while developing relationships that allow me to grow.  
         </p>
          <p className="site-description">
           I'm interested in connecting with people who also enjoy: <br />
