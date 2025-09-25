@@ -22,7 +22,7 @@ export default function Home() {
          </p>
         <div className="social-links">
           <a
-            href="https://github.com/preritoberai"
+            href="https://github.com/PreritO"
             target="_blank"
             rel="noopener noreferrer"
             className="social-link"
