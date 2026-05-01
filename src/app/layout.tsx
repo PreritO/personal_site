@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "Prerit Oberai",
@@ -14,13 +21,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning className={`dark ${inter.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         <ThemeProvider>
-          <div className="max-w-[650px] mx-auto px-8">
-            <div className="mt-48">
+          <div className="max-w-[650px] mx-auto px-6 sm:px-8">
+            <div className="mt-16 sm:mt-32 md:mt-48">
               <Navbar />
-              <main className="mt-32">
+              <main className="mt-12 sm:mt-20 md:mt-32">
                 {children}
               </main>
             </div>
