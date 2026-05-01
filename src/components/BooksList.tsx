@@ -1,51 +1,64 @@
 'use client'
 
 import { Book } from '@/lib/notion'
-import { Star, StarHalf, ExternalLink } from 'lucide-react'
+import { Star, StarHalf } from 'lucide-react'
 
 interface BooksListProps {
   books: Book[]
 }
 
-// Function to render star ratings
-function RenderRating({ rating }: { rating: number | undefined }) {
-  if (!rating) return null;
-  
-  // Convert rating to number of full and half stars
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-  
+function Stars({ rating }: { rating: number | undefined }) {
+  if (!rating) return null
+  const full = Math.floor(rating)
+  const half = rating % 1 >= 0.5
   return (
-    <div className="book-rating">
-      {[...Array(fullStars)].map((_, i) => (
-        <Star key={`star-${i}`} className="star-icon filled" size={16} />
+    <span className="book-stars" aria-label={`Rated ${rating} out of 5`}>
+      {[...Array(full)].map((_, i) => (
+        <Star key={`star-${i}`} className="star-icon" size={14} fill="currentColor" strokeWidth={0} />
       ))}
-      {hasHalfStar && <StarHalf className="star-icon half-filled" size={16} />}
-    </div>
-  );
+      {half && <StarHalf className="star-icon" size={14} fill="currentColor" strokeWidth={0} />}
+    </span>
+  )
+}
+
+function formatMonthYear(date: string) {
+  const d = new Date(date)
+  if (isNaN(d.getTime())) return ''
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
 
 export default function BooksList({ books }: BooksListProps) {
+  if (!books || books.length === 0) {
+    return <p style={{ color: 'var(--muted)' }}>No books to display yet.</p>
+  }
+
   return (
-    <div className="books-list">
-      {books.map((book) => (
-        <div key={book.id} className="book-item">
-          <div className="book-main">
-            <strong className="book-title">{book.title}</strong>
-            {book.url && (
-              <a 
-                href={book.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="book-link"
-                aria-label={`Link to ${book.title}`}
-              >
-                <ExternalLink size={14} />
-              </a>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+    <ul className="books-list">
+      {books.map((book) => {
+        const titleEl = book.url ? (
+          <a
+            href={book.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="book-title-link"
+          >
+            {book.title}
+          </a>
+        ) : (
+          book.title
+        )
+
+        return (
+          <li key={book.id} className="book-row">
+            <span className="book-title">{titleEl}</span>
+            {book.author && <span className="book-author">{book.author}</span>}
+            <span className="book-meta">
+              <Stars rating={book.rating} />
+              {book.dateFinished && <span>{formatMonthYear(book.dateFinished)}</span>}
+            </span>
+          </li>
+        )
+      })}
+    </ul>
+  )
 }
