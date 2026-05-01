@@ -18,14 +18,20 @@ export default function Navbar() {
         >
           Home
         </Link>
-        <Link 
-          href="/posts" 
+        <Link
+          href="/posts"
           className={`nav-link ${pathname.startsWith('/posts') ? 'active' : ''}`}
         >
           Posts
         </Link>
-        <Link 
-          href="/books" 
+        <Link
+          href="/projects"
+          className={`nav-link ${pathname.startsWith('/projects') ? 'active' : ''}`}
+        >
+          Projects
+        </Link>
+        <Link
+          href="/books"
           className={`nav-link ${pathname.startsWith('/books') ? 'active' : ''}`}
         >
           Bookshelf

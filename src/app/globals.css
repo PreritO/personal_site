@@ -269,6 +269,44 @@ a:focus {
   margin-bottom: 1rem;
 }
 
+/* Projects page styles */
+.projects-intro {
+  font-size: 1.125rem;
+  opacity: 0.7;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.project-item {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-title {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.project-item:hover .project-title {
+  opacity: 1;
+}
+
+.project-description {
+  font-size: 1.125rem;
+  opacity: 0.7;
+  line-height: 1.5;
+}
+
 /* Books page styles */
 .books-header, .thoughts-header {
   font-size: 2rem;

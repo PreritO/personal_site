@@ -1,25 +1,20 @@
 import Image from "next/image";
-import { Github, Linkedin, Mail } from 'lucide-react'
+import { Github, Linkedin, Mail, Calendar } from 'lucide-react'
 
 export default function Home() {
   return (
     <div className="container">
       <div className="site-header">
-        <h1 className="site-title">Hey, I'm Prerit!</h1>
+        <h1 className="site-title">Hey, I&apos;m Prerit!</h1>
         <p className="site-description">
-        I live in New York and currently work as a Founding Engineer at a very early stage startup focusing on building Patient Navigation Services for the elderly. Prior to that, I was a SWE at Microsoft on the Office Security and Excel teams for 4 years and before that, I studied EECS at CU Boulder for both my undergrad and graduate degrees. I'm excited about leveraging technology to improve people's everyday lives and enjoy building high quality software that can scale quickly.
+          I&apos;m building <a href="https://www.prototyping.io/" target="_blank" rel="noopener noreferrer" className="underline">Prototyping.io</a> (YC P26), an AI-driven manufacturing platform for mechanical parts. We analyze CAD designs for manufacturability and automate production workflows so engineers can get high-quality parts faster and at lower cost.
         </p>
         <p className="site-description">
-          I love to learn how things work and am fascinated by how businesses scale from zero to millions. Outside of my nerdy musings, I like playing basketball, running and reading biographies. If you have any recs, please send them my way. My vision for a successful life entails doing meaningful work that brings me joy, surrounding myself with people who care for me while developing relationships that allow me to grow.  
+          Before this, I was a Founding Engineer at an early-stage startup building Patient Navigation Services for the elderly, and before that spent a few years at Microsoft on the Excel and Office Security teams. Earlier, I started a PhD at UIUC focused on network and storage systems (left after a year and a half) and did my undergrad and masters in EECS at CU Boulder. What ties it together is curiosity: I like working on hard problems across whatever domain I land in.
         </p>
-         <p className="site-description">
-          I'm interested in connecting with people who also enjoy: <br />
-          - Software development and engineering best practices <br />
-          - Entrepreneurship<br />
-          - Fitness & Sports<br />
-          - Reading and sharing book recommendations <br />
-          - Tools for Thoughts and creating a 2nd Brain <br />
-         </p>
+        <p className="site-description">
+          Outside of work, I&apos;m fascinated by how businesses scale to millions of users, play basketball, run, and read a lot of biographies — always taking recs. If you want to chat about hardware, manufacturing, security, or book recommendations, my inbox is open and feel free to <a href="https://calendly.com/prerit-oberai/30min" target="_blank" rel="noopener noreferrer" className="underline">schedule some time on my calendar</a>.
+        </p>
         <div className="social-links">
           <a
             href="https://github.com/PreritO"
@@ -42,6 +37,14 @@ export default function Home() {
             className="social-link"
           >
             <Mail className="social-icon" />
+          </a>
+          <a
+            href="https://calendly.com/prerit-oberai/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-link"
+          >
+            <Calendar className="social-icon" />
           </a>
         </div>
       </div>
