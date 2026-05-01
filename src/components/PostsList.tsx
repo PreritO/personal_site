@@ -24,7 +24,7 @@ export default function PostsList({ posts, selectedTag }: PostsListProps) {
       {filteredPosts.map((post) => (
         <article key={post.slug}>
           <Link href={`/posts/${post.slug}`} className="post-item">
-            <h2 className="text-2xl font-serif opacity-90 hover:opacity-100 transition-opacity leading-tight">
+            <h2 className="post-title">
               {post.title}
             </h2>
             <time className="post-date">{new Date(post.date).toLocaleDateString()}</time>
