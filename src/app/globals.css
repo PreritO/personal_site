@@ -3,19 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #111827;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --secondary: #6b7280;
-  --border: #e5e7eb;
+  --background: #fafaf7;
+  --foreground: #1a1a1a;
+  --foreground-muted: #4a4a4a;
+  --primary: #4f5fb9;
+  --primary-hover: #3d4ba0;
+  --secondary: #6b6b66;
+  --border: #e5e5df;
   --card: #ffffff;
-  --card-hover: #f9fafb;
+  --card-hover: #f3f3ee;
 }
 
 .dark {
   --background: #111111;
   --foreground: #ffffff;
+  --foreground-muted: #cccccc;
   --primary: #60a5fa;
   --primary-hover: #3b82f6;
   --secondary: #9ca3af;
@@ -222,6 +224,23 @@ a:visited {
 /* Remove focus outline */
 a:focus {
   outline: none;
+}
+
+/* Inline body links (e.g., Prototyping.io, Calendly) */
+.site-description a,
+.projects-intro a,
+.post-content a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.site-description a:hover,
+.projects-intro a:hover,
+.post-content a:hover {
+  color: var(--primary-hover);
 }
 
 /* Post page styles */
