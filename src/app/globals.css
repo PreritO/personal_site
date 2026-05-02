@@ -46,11 +46,51 @@ body {
   font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 17px;
   line-height: 1.65;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern", "liga", "calt";
+}
+
+/* =========================================================
+   Page wrapper — explicit centering rules so this never
+   depends on Tailwind picking up an arbitrary value.
+   ========================================================= */
+.page-wrapper {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .page-wrapper {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 4rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .page-wrapper {
+    padding-top: 5rem;
+  }
+}
+
+.page-main {
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .page-main { margin-top: 3.5rem; }
+}
+
+@media (min-width: 768px) {
+  .page-main { margin-top: 4rem; }
 }
 
 a:visited { color: inherit; }

@@ -22,15 +22,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className="min-h-screen font-sans antialiased">
+      <body className="antialiased">
         <ThemeProvider>
-          <div className="max-w-[720px] mx-auto px-6 sm:px-8">
-            <div className="mt-10 sm:mt-16 md:mt-20">
-              <Navbar />
-              <main className="mt-10 sm:mt-14 md:mt-16">
-                {children}
-              </main>
-            </div>
+          <div className="page-wrapper">
+            <Navbar />
+            <main className="page-main">{children}</main>
           </div>
         </ThemeProvider>
       </body>
