@@ -44,3 +44,8 @@ next-env.d.ts
 /public/notion-images/
 
 .github/copilot-instructions.md
+.env*.local
+
+
+# Local essay drafts stay local — publish via Notion
+src/posts/

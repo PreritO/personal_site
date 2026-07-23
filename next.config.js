@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    domains: ['www.notion.so', 'notion.so', 's3.us-west-2.amazonaws.com'],
+  async redirects() {
+    return [
+      // permanent: true emits 308s (not 301s) — SEO-equivalent.
+      { source: '/posts', destination: '/writing', permanent: true },
+      { source: '/posts/:slug', destination: '/writing/:slug', permanent: true },
+    ]
   },
 }
 
