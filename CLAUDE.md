@@ -4,7 +4,7 @@ Guidance for Claude Code agents working in this repo.
 
 ## Project
 
-Personal site for Prerit Oberai (founder of Prototyping.io, YC P26).
+Personal site for Prerit Oberai (co-founder and CTO of Prototyping.io, YC P26).
 
 - **Stack:** Next.js 14 App Router, Tailwind, TypeScript
 - **Content:** Notion-backed (`src/lib/notion.ts`); requires `NOTION_API_KEY`, `NOTION_BLOG_DATABASE_ID`, `NOTION_BOOKS_DATABASE_ID`, `NOTION_THOUGHTS_PAGE_ID` to build locally

@@ -137,7 +137,7 @@ export default async function PostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
       <footer className="post-byline">
-        Prerit Oberai is the founder of{' '}
+        Prerit Oberai is the co-founder and CTO of{' '}
         <a href="https://www.prototyping.io/" target="_blank" rel="noopener noreferrer">Prototyping.io</a>{' '}
         (YC P26), an AI-driven manufacturing platform.{' '}
         <Link href="/">More about Prerit</Link> · <Link href="/writing">More writing</Link>

@@ -6,7 +6,7 @@
 
 ## Product Context
 
-- **What this is:** Personal site / blog for Prerit Oberai, founder of Prototyping.io (YC P26). Writing-first: the site exists to publish essays and say who Prerit is.
+- **What this is:** Personal site / blog for Prerit Oberai, co-founder and CTO of Prototyping.io (YC P26). Writing-first: the site exists to publish essays and say who Prerit is.
 - **Who it's for:** Fellow founders, investors, candidates, customers, and his network.
 - **Project type:** Personal site with editorial sections (home, writing, projects, bookshelf, thoughts).
 - **Stack:** Next.js 14 (App Router) + Tailwind, Notion-backed content, deployed on Vercel.
@@ -88,7 +88,7 @@ A fixed left rail beside a single centered column. The rail is positioned relati
 
 ### Essay page anatomy
 
-Hero image (only if the post has a Notion cover: 1.91:1, explicit dimensions, `object-fit: cover`, max-height 360px, 4px radius, hides on load error) → title → muted date + plain-text tag links → prose → **byline footer** ("Prerit Oberai is the founder of Prototyping.io (YC P26)" with accent links, muted scale). The byline is load-bearing: most essay readers arrive from a shared link and never see the nav.
+Hero image (only if the post has a Notion cover: 1.91:1, explicit dimensions, `object-fit: cover`, max-height 360px, 4px radius, hides on load error) → title → muted date + plain-text tag links → prose → **byline footer** ("Prerit Oberai is the co-founder and CTO of Prototyping.io (YC P26)" with accent links, muted scale). The byline is load-bearing: most essay readers arrive from a shared link and never see the nav.
 
 ---
 
