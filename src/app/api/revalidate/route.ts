@@ -30,11 +30,10 @@ export async function POST(request: NextRequest) {
     if (slug) revalidatePath(`/writing/${slug}`);
     revalidatePath('/feed.xml');
     revalidatePath('/sitemap.xml');
-    revalidatePath('/thoughts');
 
     return NextResponse.json({
       success: true,
-      revalidated: ['/writing', '/writing/[slug]', slug ? `/writing/${slug}` : null, '/feed.xml', '/sitemap.xml', '/thoughts'].filter(Boolean),
+      revalidated: ['/writing', '/writing/[slug]', slug ? `/writing/${slug}` : null, '/feed.xml', '/sitemap.xml'].filter(Boolean),
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
