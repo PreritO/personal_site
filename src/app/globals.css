@@ -254,6 +254,41 @@ a.underline {
 .thoughts-intro p { margin: 0; }
 
 /* =========================================================
+   Writing empty states + error retry (PR1 plumbing — styled
+   with existing tokens; the visual system lands in PR2)
+   ========================================================= */
+.writing-empty {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 2rem;
+  max-width: 62ch;
+  line-height: 1.65;
+}
+
+.writing-empty a {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+  text-decoration: none;
+  transition: opacity 150ms ease;
+}
+
+.writing-empty a:hover { opacity: 0.7; }
+
+.error-retry {
+  background: none;
+  border: none;
+  padding: 0 0 1px;
+  font: inherit;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.error-retry:hover { opacity: 0.7; }
+
+/* =========================================================
    Posts list (date column · title)
    ========================================================= */
 .posts-list {

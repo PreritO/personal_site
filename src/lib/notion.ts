@@ -1,22 +1,15 @@
-import { Client } from "@notionhq/client";
+import { Client, isFullPage } from "@notionhq/client";
 import { NotionToMarkdown } from "notion-to-md";
-import { remark } from 'remark';
-import html from 'remark-html';
-import { 
-  PageObjectResponse, 
-  PartialPageObjectResponse,
-  DatabaseObjectResponse,
-  PartialDatabaseObjectResponse
-} from "@notionhq/client/build/src/api-endpoints";
-import { processNotionImages } from './notion-images';
+import { remark } from "remark";
+import remarkGfm from "remark-gfm";
+import html from "remark-html";
+import { cache } from "react";
+import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 // Initialize Notion client
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
-
-// Initialize NotionToMarkdown converter
-const n2m = new NotionToMarkdown({ notionClient: notion });
 
 // Types for our Notion database entries
 export type BlogPost = {
@@ -27,6 +20,9 @@ export type BlogPost = {
   categories: string[];
   content: string;
   status: string;
+  /** Proxy path (file covers) or direct URL (external covers). */
+  coverImage?: string;
+  description?: string;
 };
 
 export type Book = {
@@ -40,183 +36,246 @@ export type Book = {
   isPublic: boolean;
 };
 
-/**
- * Converts Notion blocks to HTML content
- */
-export async function notionBlocksToHtml(pageId: string): Promise<string> {
-  // Get all blocks in the page
-  const mdBlocks = await n2m.pageToMarkdown(pageId);
-  const mdString = n2m.toMarkdownString(mdBlocks);
-  
-  // Convert markdown to HTML
-  const processedContent = await remark()
-    .use(html)
-    .process(mdString.parent);
-  
-  // Process Notion images to handle expiration issues
-  const htmlWithProcessedImages = await processNotionImages(processedContent.toString());
-  
-  return htmlWithProcessedImages;
+/** Join every rich-text fragment, not just [0]. */
+function richText(prop: unknown): string {
+  const p = prop as { rich_text?: Array<{ plain_text: string }> } | undefined;
+  if (!p?.rich_text) return "";
+  return p.rich_text.map((t) => t.plain_text).join("");
+}
+
+function titleText(prop: unknown): string {
+  const p = prop as { title?: Array<{ plain_text: string }> } | undefined;
+  if (!p?.title) return "";
+  return p.title.map((t) => t.plain_text).join("");
 }
 
 /**
- * Gets all published blog posts
+ * Cover URL for a page: external covers are permanent — use them directly;
+ * file covers are expiring S3 URLs — route through the image proxy.
  */
-export async function getAllPosts(): Promise<BlogPost[]> {
-  const blogDatabaseId = process.env.NOTION_BLOG_DATABASE_ID as string;
-  
-  console.log("Fetching blog posts from database ID:", blogDatabaseId);
+function coverFor(page: PageObjectResponse): string | undefined {
+  const cover = page.cover;
+  if (!cover) return undefined;
+  if (cover.type === "external") return cover.external.url;
+  return `/api/notion-image/${page.id}`;
+}
 
-  // First, let's fetch the database to inspect its structure
-  try {
-    const databaseInfo = await notion.databases.retrieve({
-      database_id: blogDatabaseId,
-    });
-    
-    console.log("Database properties:", Object.keys(databaseInfo.properties));
-  } catch (error) {
-    console.error("Error retrieving database info:", error);
+/**
+ * Typed parse boundary. Returns null (and logs) for rows that would otherwise
+ * crash the whole index — a renamed property or an empty slug must cost us one
+ * row, not the site, the feed, and the build.
+ */
+function parsePostPage(page: unknown): BlogPost | null {
+  if (!isFullPage(page as Parameters<typeof isFullPage>[0])) return null;
+  const pageObj = page as PageObjectResponse;
+  const props = pageObj.properties as Record<string, unknown>;
+
+  const title = titleText(props.Title);
+  const slug = richText(props.Slug).trim();
+  const dateProp = props.Date as { date?: { start?: string } } | undefined;
+  const date = dateProp?.date?.start ?? "";
+  const statusProp = props.Status as
+    | { status?: { name?: string }; select?: { name?: string } }
+    | undefined;
+  const status = statusProp?.status?.name ?? statusProp?.select?.name ?? "Unknown";
+  const categoriesProp = props.Categories as
+    | { multi_select?: Array<{ name: string }> }
+    | undefined;
+
+  if (!title || !slug || !date) {
+    console.warn(
+      `Skipping malformed Notion post row ${pageObj.id} (title="${title}", slug="${slug}", date="${date}")`
+    );
+    return null;
   }
 
-  // Query the database with a filter for "Done" status
+  return {
+    id: pageObj.id,
+    title,
+    slug,
+    date,
+    categories: categoriesProp?.multi_select?.map((c) => c.name) ?? [],
+    content: "", // fetched separately when needed
+    status,
+    coverImage: coverFor(pageObj),
+    description: richText(props.Description) || undefined,
+  };
+}
+
+/**
+ * Gets all published blog posts. Paginated (Notion caps responses at 100).
+ * Throws on API failure: at build time that fails the build loudly; during ISR
+ * regeneration Next retains the last good page.
+ */
+export const getAllPosts = cache(async (): Promise<BlogPost[]> => {
+  const blogDatabaseId = process.env.NOTION_BLOG_DATABASE_ID as string;
+
+  const posts: BlogPost[] = [];
+  let cursor: string | undefined = undefined;
+  do {
+    const response = await notion.databases.query({
+      database_id: blogDatabaseId,
+      start_cursor: cursor,
+      filter: {
+        property: "Status",
+        status: { equals: "Done" },
+      },
+      sorts: [{ property: "Date", direction: "descending" }],
+    });
+    for (const page of response.results) {
+      const post = parsePostPage(page);
+      if (post) posts.push(post);
+    }
+    cursor = response.has_more ? response.next_cursor ?? undefined : undefined;
+  } while (cursor);
+
+  const seen = new Set<string>();
+  for (const post of posts) {
+    if (seen.has(post.slug)) {
+      console.warn(`Duplicate slug "${post.slug}" in Notion — later post ${post.id} is shadowed`);
+    }
+    seen.add(post.slug);
+  }
+
+  return posts;
+});
+
+/**
+ * Published page-ID set for image-proxy authorization. Module-scope cache with
+ * TTL + single-flight refresh so the hero of a just-published post doesn't 404
+ * until the TTL lapses.
+ */
+const PUBLISHED_SET_TTL_MS = 5 * 60 * 1000;
+let publishedSet: { ids: Set<string>; fetchedAt: number } | null = null;
+let publishedSetInflight: Promise<Set<string>> | null = null;
+
+function normalizeId(id: string): string {
+  return id.replace(/-/g, "").toLowerCase();
+}
+
+async function fetchPublishedIds(): Promise<Set<string>> {
+  const posts = await getAllPosts();
+  return new Set(posts.map((p) => normalizeId(p.id)));
+}
+
+export async function isPublishedPageId(pageId: string): Promise<boolean> {
+  const id = normalizeId(pageId);
+  const now = Date.now();
+  if (publishedSet && now - publishedSet.fetchedAt < PUBLISHED_SET_TTL_MS) {
+    if (publishedSet.ids.has(id)) return true;
+  }
+  // Miss or stale: single-flight refresh before saying no.
+  if (!publishedSetInflight) {
+    publishedSetInflight = fetchPublishedIds()
+      .then((ids) => {
+        publishedSet = { ids, fetchedAt: Date.now() };
+        return ids;
+      })
+      .finally(() => {
+        publishedSetInflight = null;
+      });
+  }
+  try {
+    const ids = await publishedSetInflight;
+    return ids.has(id);
+  } catch {
+    // Refresh failed — fall back to any cached set rather than 404ing valid images.
+    return publishedSet?.ids.has(id) ?? false;
+  }
+}
+
+/**
+ * Converts a page's blocks to sanitized HTML. A fresh NotionToMarkdown per call
+ * so the image transformer's pageId closure can't race concurrent conversions.
+ * File-type images are rewritten to stable proxy URLs at the only point where
+ * the block ID is available (post-hoc regex on the HTML cannot recover it).
+ */
+export async function notionBlocksToHtml(pageId: string): Promise<string> {
+  const n2m = new NotionToMarkdown({ notionClient: notion });
+
+  n2m.setCustomTransformer("image", async (block) => {
+    const image = (block as { image?: { type: string; external?: { url: string }; file?: { url: string }; caption?: Array<{ plain_text: string }> } }).image;
+    if (!image) return "";
+    const caption = image.caption?.map((c) => c.plain_text).join("") ?? "";
+    if (image.type === "external" && image.external) {
+      // External images never expire — pass through untouched.
+      return `![${caption}](${image.external.url})`;
+    }
+    return `![${caption}](/api/notion-image/${pageId}/${block.id})`;
+  });
+
+  const mdBlocks = await n2m.pageToMarkdown(pageId);
+  const mdString = n2m.toMarkdownString(mdBlocks);
+
+  // remark-html's sanitizer stays ON (default) — it is the XSS boundary in
+  // front of dangerouslySetInnerHTML. Never pass `sanitize: false`.
+  const processedContent = await remark()
+    .use(remarkGfm)
+    .use(html)
+    .process(mdString.parent);
+
+  // Body images stay unoptimized by design; at least load them lazily.
+  return processedContent.toString().replace(/<img /g, '<img loading="lazy" ');
+}
+
+/**
+ * Gets a published post by slug. Contract:
+ *  - no matching published row → null (page calls notFound())
+ *  - Notion/API/conversion failure → throws (reaches error.tsx / retains ISR page)
+ */
+export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
+  const blogDatabaseId = process.env.NOTION_BLOG_DATABASE_ID as string;
+
   const response = await notion.databases.query({
     database_id: blogDatabaseId,
     filter: {
-      property: "Status",
-      status: {
-        equals: "Done"
-      }
+      and: [
+        { property: "Slug", rich_text: { equals: slug } },
+        { property: "Status", status: { equals: "Done" } },
+      ],
     },
-    sorts: [
-      {
-        property: "Date",
-        direction: "descending",
-      },
-    ],
   });
-  
-  console.log(`Found ${response.results.length} posts with "Done" status`);
 
-  const posts = await Promise.all(
-    response.results.map(async (page) => {
-      // Type assertion to ensure we're working with a PageObjectResponse
-      const pageObj = page as PageObjectResponse;
-      const properties = pageObj.properties as any;
-      
-      console.log("Post property names:", Object.keys(properties));
-      console.log("Status property type:", properties.Status?.type);
-      console.log("Status property value:", JSON.stringify(properties.Status, null, 2));
-      
-      return {
-        id: pageObj.id,
-        slug: properties.Slug.rich_text[0]?.plain_text || "",
-        title: properties.Title.title[0]?.plain_text || "Untitled",
-        date: properties.Date.date?.start || "",
-        categories: properties.Categories.multi_select.map((category: any) => category.name),
-        content: "", // We'll fetch this separately when needed
-        status: properties.Status?.status?.name || properties.Status?.select?.name || "Unknown",
-      };
-    })
-  );
+  const post = response.results.map(parsePostPage).find((p): p is BlogPost => p !== null);
+  if (!post) return null;
 
-  return posts;
-}
+  post.content = await notionBlocksToHtml(post.id);
+  return post;
+});
 
 /**
- * Gets a specific blog post by slug
- */
-export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  const blogDatabaseId = process.env.NOTION_BLOG_DATABASE_ID as string;
-  
-  try {
-    const response = await notion.databases.query({
-      database_id: blogDatabaseId,
-      filter: {
-        property: "Slug",
-        rich_text: {
-          equals: slug,
-        },
-      },
-    });
-
-    if (!response.results.length) {
-      return null;
-    }
-
-    // Type assertion to ensure we're working with a PageObjectResponse
-    const page = response.results[0] as PageObjectResponse;
-    const properties = page.properties as any;
-    
-    // Get the content as HTML
-    const content = await notionBlocksToHtml(page.id);
-
-    return {
-      id: page.id,
-      slug: properties.Slug?.rich_text?.[0]?.plain_text || "",
-      title: properties.Title?.title?.[0]?.plain_text || "Untitled",
-      date: properties.Date?.date?.start || "",
-      categories: properties.Categories?.multi_select?.map((category: any) => category.name) || [],
-      content,
-      status: properties.Status?.status?.name || properties.Status?.select?.name || "Unknown",
-    };
-  } catch (error) {
-    console.error("Error fetching post by slug:", error);
-    return null;
-  }
-}
-
-/**
- * Gets all public books
+ * Gets all public books.
  */
 export async function getAllBooks(): Promise<Book[]> {
   const booksDatabaseId = process.env.NOTION_BOOKS_DATABASE_ID as string;
-  
+
   try {
-    // First, let's fetch the database to inspect its structure
-    const databaseInfo = await notion.databases.retrieve({
-      database_id: booksDatabaseId,
-    });
-    
-    console.log("Books database properties:", JSON.stringify(databaseInfo.properties, null, 2));
-    
     const response = await notion.databases.query({
       database_id: booksDatabaseId,
       filter: {
         property: "Public",
-        checkbox: {
-          equals: true,
-        },
+        checkbox: { equals: true },
       },
-      sorts: [
-        {
-          property: "Date Finished",
-          direction: "descending",
-        },
-      ],
+      sorts: [{ property: "Date Finished", direction: "descending" }],
     });
 
-    console.log(`Found ${response.results.length} books total`);
-
-    const books = await Promise.all(
-      response.results.map(async (page) => {
-        // Type assertion to ensure we're working with a PageObjectResponse
-        const pageObj = page as PageObjectResponse;
-        const properties = pageObj.properties as any;
-        
-        return {
-          id: pageObj.id,
-          title: properties.Title?.title?.[0]?.plain_text || "Untitled",
-          author: properties.Author?.rich_text?.[0]?.plain_text || "",
-          url: properties.Url?.url || "",
-          dateFinished: properties["Date Finished"]?.date?.start || "",
-          rating: properties.Rating?.number,
-          notes: properties.Notes?.rich_text?.[0]?.plain_text || "",
-          isPublic: properties["Public"]?.checkbox || false,
-        };
-      })
-    );
-
-    return books;
+    return response.results.filter(isFullPage).map((pageObj) => {
+      const props = pageObj.properties as Record<string, unknown>;
+      const urlProp = props.Url as { url?: string } | undefined;
+      const dateProp = props["Date Finished"] as { date?: { start?: string } } | undefined;
+      const ratingProp = props.Rating as { number?: number } | undefined;
+      const publicProp = props.Public as { checkbox?: boolean } | undefined;
+      return {
+        id: pageObj.id,
+        title: titleText(props.Title) || "Untitled",
+        author: richText(props.Author),
+        url: urlProp?.url ?? "",
+        dateFinished: dateProp?.date?.start ?? "",
+        rating: ratingProp?.number,
+        notes: richText(props.Notes),
+        isPublic: publicProp?.checkbox ?? false,
+      };
+    });
   } catch (error) {
     console.error("Error fetching books:", error);
     return [];
@@ -224,80 +283,40 @@ export async function getAllBooks(): Promise<Book[]> {
 }
 
 /**
- * Gets all  thoughts
+ * Gets the thoughts page's bulleted list items, newest first.
  */
-// Add this to src/lib/notion.ts
-
 export async function getThoughtsPage() {
-  // Replace with your actual Notion page ID
   const pageId = process.env.NOTION_THOUGHTS_PAGE_ID;
-  
-  console.log("getThoughtsPage called with pageId:", pageId);
-  
+
   if (!pageId) {
     console.error("Missing NOTION_THOUGHTS_PAGE_ID environment variable");
     return { blocks: [] };
   }
 
   try {
-    console.log("Fetching blocks from Notion page...");
-    // Fetch all blocks from the page
-    const blocks = await notion.blocks.children.list({
-      block_id: pageId,
-    });
-
-    console.log(`Retrieved ${blocks.results.length} blocks from Notion`);
-
-    // Process the blocks to extract the bulleted list items
+    const blocks = await notion.blocks.children.list({ block_id: pageId });
     const thoughts = processThoughtBlocks(blocks.results);
-
-    // Reverse the array because most recent thoughts appear at the bottom and we want to appear at the top
-    const reversedThoughts = thoughts.reverse();
-    
-    console.log(`Processed ${reversedThoughts.length} thoughts`);
-
     return {
-      blocks: reversedThoughts,
-      lastEditedTime: new Date().toISOString() // We could fetch page metadata for this
+      blocks: thoughts.reverse(),
+      lastEditedTime: new Date().toISOString(),
     };
   } catch (error) {
     console.error("Error fetching thoughts page:", error);
-    if (error instanceof Error) {
-      console.error("Error details:", {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      });
-    }
     return { blocks: [] };
   }
 }
 
-// Helper function to process blocks and extract bulleted list items
-function processThoughtBlocks(blocks: any[]) {
+function processThoughtBlocks(blocks: unknown[]) {
   const thoughts = [];
-  
-  for (const block of blocks) {
-    // Process bulleted list items
-    if (block.type === 'bulleted_list_item') {
-      const content = block.bulleted_list_item.rich_text.map((text: any) => text.plain_text).join('');
-      
-      // Basic thought item
-      const thought = {
+  for (const block of blocks as Array<{ id: string; type: string; has_children: boolean; bulleted_list_item?: { rich_text: Array<{ plain_text: string }> } }>) {
+    if (block.type === "bulleted_list_item" && block.bulleted_list_item) {
+      thoughts.push({
         id: block.id,
-        content,
+        content: block.bulleted_list_item.rich_text.map((t) => t.plain_text).join(""),
         hasChildren: block.has_children,
-        children: []
-      };
-      
-      // If this is a toggle, we'll need to fetch its children separately
-      if (block.has_children) {
-        // We'd ideally fetch children here, but we'll handle this later
-      }
-      
-      thoughts.push(thought);
+        children: [],
+      });
     }
   }
-  
   return thoughts;
 }

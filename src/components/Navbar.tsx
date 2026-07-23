@@ -19,10 +19,10 @@ export default function Navbar() {
           Home
         </Link>
         <Link
-          href="/posts"
-          className={`nav-link ${pathname.startsWith('/posts') ? 'active' : ''}`}
+          href="/writing"
+          className={`nav-link ${pathname.startsWith('/writing') ? 'active' : ''}`}
         >
-          Posts
+          Writing
         </Link>
         <Link
           href="/projects"

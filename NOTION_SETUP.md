@@ -66,3 +66,21 @@ Make sure your Notion databases have the correct fields:
 - Date (Date)
 - Tags (Multi-select)
 - Public? (Checkbox)
+
+## Optional post properties (added 2026-07)
+
+- **Description** (rich text): used as the post's meta description, OG description, and RSS summary. If absent, the site falls back to the first ~155 characters of the post body, then the site tagline.
+- **Page cover**: set a cover image on the post's Notion page and it becomes the post's `og:image` (and, once PR 2 lands, the hero image). Notion-uploaded covers are served through the site's image proxy so they never expire; externally-linked covers are used as-is.
+
+## Publishing & revalidation
+
+Posts appear when `Status` = `Done` (both the list *and* individual post pages require it — drafts are not reachable by slug). To publish instantly instead of waiting for the ISR window:
+
+```
+curl -X POST https://prerit.website/api/revalidate \
+  -H "Authorization: Bearer $REVALIDATION_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"slug":"your-post-slug"}'
+```
+
+`REVALIDATION_SECRET` must be set in Vercel env; the endpoint rejects all requests when it's unset.
