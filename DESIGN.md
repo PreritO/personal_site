@@ -1,14 +1,14 @@
 # Design System — Prerit Oberai's personal site
 
-**The rule above all rules:** Content first. If a decoration, layout flourish, card, or border can be removed without losing meaning, remove it. Inspired by [thesephist.com](https://thesephist.com/) (layout discipline) and [natural.co/blog/agentic-payments-memo](https://www.natural.co/blog/agentic-payments-memo) (typography).
+**The rule above all rules:** Content first. If a decoration, layout flourish, card, or border can be removed without losing meaning, remove it. Structure inspired by bykahlil.com (quiet chrome, essay anatomy), diverged deliberately on its signature elements — see the Decisions Log.
 
 ---
 
 ## Product Context
 
-- **What this is:** Personal site / blog for Prerit Oberai, founder of Prototyping.io (YC P26).
+- **What this is:** Personal site / blog for Prerit Oberai, co-founder and CTO of Prototyping.io (YC P26). Writing-first: the site exists to publish essays and say who Prerit is.
 - **Who it's for:** Fellow founders, investors, candidates, customers, and his network.
-- **Project type:** Personal site with editorial sections (home, posts, projects, bookshelf, random thoughts).
+- **Project type:** Personal site with editorial sections (home, writing, projects, bookshelf, thoughts).
 - **Stack:** Next.js 14 (App Router) + Tailwind, Notion-backed content, deployed on Vercel.
 - **Audience expectation:** Substance over polish. Reads quickly, leaves the visitor with a clear sense of who Prerit is and what he's building.
 
@@ -16,12 +16,10 @@
 
 ## Aesthetic Direction
 
-- **Direction:** Minimal, content-led. A document, not an interface.
-- **Decoration level:** Minimal. Typography, whitespace, and one accent color do all the work. No cards (except where data structure genuinely needs containment), no inset color blocks, no numbered indices, no mono uppercase labels, no gradients, no shadows.
-- **Mood:** A founder's working notebook. Calm, considered, easy to read. The visitor should feel like they walked into a quiet study, not a product page.
-- **Reference sites:**
-  - [thesephist.com](https://thesephist.com/) — single column, list-driven, content density, hairline rules.
-  - [natural.co/blog/agentic-payments-memo](https://www.natural.co/blog/agentic-payments-memo) — warm paper background, regular-weight headings, generous line-height.
+- **Direction:** Minimal, content-led. A document, not an interface. Two registers: **chrome** (nav, lists, meta — small and quiet at 15px) and **prose** (essays — comfortable at 17px). The contrast between them *is* the hierarchy.
+- **Decoration level:** Minimal. Typography, whitespace, and one accent color do all the work. No cards, no inset color blocks, no numbered indices, no mono uppercase labels, no gradients, no shadows.
+- **Mood:** A founder's working notebook. Calm, considered, easy to read.
+- **Reference:** bykahlil.com for the structural feeling (fixed rail, quiet scale, essay pages) — **principles borrowed, signature elements deliberately not copied** (no thumbnail-arrow rows, no flat handle-row header, no per-navigation stagger; see Decisions Log 2026-07-23).
 
 ---
 
@@ -29,136 +27,112 @@
 
 One font everywhere — Inter — at three weights. No serif, no mono, no display face.
 
-- **Family:** **Inter** loaded via `next/font/google` with `display: "swap"` and the `--font-inter` CSS variable.
-- **Stack:** `var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`
-- **Weights loaded:** 400 (body), 500 (headings + active states), 600 (reserved — use sparingly for emphasis only)
+- **Family:** **Inter** via `next/font/google`, `display: "swap"`, `--font-inter` variable.
+- **Weights loaded:** 400 (nearly everything), 500 (home name, list titles, emphasis), 600 (reserved).
 
-### Scale
+### Scale — two registers
 
-| Role | Size | Line-height | Weight | Letter-spacing | Notes |
-|------|------|-------------|--------|----------------|-------|
-| Page heading (h1) | 30px / 1.875rem | 1.15 | 500 | -0.015em | Used for `Hey, I'm Prerit.`, `Posts`, `Projects`, `Bookshelf`, `Random Thoughts`, individual post titles |
-| Section heading (h2) | 24px / 1.5rem | 1.25 | 500 | -0.005em | Inside long-form posts |
-| Sub-heading (h3) | 20px / 1.25rem | 1.3 | 500 | 0 | Inside long-form posts |
-| Body | 17px / 1.0625rem | 1.65 | 400 | 0 | All paragraphs and list rows. On mobile, drop to 16px. |
-| Body — small | 15px / 0.9375rem | 1.55 | 400 | 0 | Project descriptions, captions, secondary copy |
-| Meta | 14px / 0.875rem | 1.4 | 400 | 0 | Dates, post counts, author lines, book metadata |
-| Nav link | 16px | 1 | 400 (500 active) | 0 | All five nav items render uniform; active item is weight 500 with `color: var(--text)` |
+**Chrome register (nav, lists, meta, home bio):**
 
-**Tabular numerals:** Apply `font-variant-numeric: tabular-nums` on dates and any column of numbers (book ratings dates, post date column) so the digits line up vertically.
+| Role | Size | Line-height | Weight | Notes |
+|------|------|-------------|--------|-------|
+| Chrome body | 15px | 24px | 400 | Nav labels, list rows, bio paragraphs, page intros. 16px floor at ≤640px. |
+| Home name | 20px | 1.3 | 500 | The one elevated element on the home page. |
+| Page heading | 20px | 1.3 | 400 | `Writing`, `Projects`, `Bookshelf`, `Thoughts` — quiet, not shouty. |
+| Meta | 14px | 1.4 | 400 | Dates, book metadata. `tabular-nums` on all date/number columns. |
 
-**Mobile breakpoint:** At `max-width: 640px`, drop body to 16px, page heading to 26px, and reduce horizontal padding (see Layout).
+**Prose register (essay pages only):**
+
+| Role | Size | Line-height | Weight | Notes |
+|------|------|-------------|--------|-------|
+| Post title (h1) | 32px | 1.3 | 400 | letter-spacing -0.01em; 24px at ≤640px |
+| Post h2 | 24px | 1.35 | 400 | |
+| Post h3 | 20px | 1.4 | 400 | |
+| Essay body | 17px | 28px | 400 | 16px/26px at ≤640px. Text measure ~640px (68–72 chars); the 720px column is for media only. |
+
+**Why two sizes:** 15px chrome keeps the shell quiet; essays are the product and read at 17px. Locked at the 2026-07-23 review gate (UC3) — do not "unify" them.
 
 ---
 
 ## Color
 
-Restrained palette. One accent. Warm neutrals.
+Restrained palette. One accent. Warm neutrals. **Light only** — `color-scheme: light` is pinned; there is no dark scope.
 
 | Variable | Value | Usage |
 |----------|-------|-------|
-| `--background` | `#faf8f2` | Page background. Warm bone — between pure white and cream. |
+| `--background` | `#faf8f2` | Page background. Warm bone. |
 | `--text` | `#1a1a1a` | Primary text. Warm near-black, never `#000`. |
-| `--muted` | `#6b6b66` | Dates, post counts, author names, secondary copy, project descriptions. |
-| `--accent` | `#b8470c` | **Surgical use only**: inline link color + 1px underline (Prototyping.io, Calendly), star ratings on books, hover state on post/project titles, active nav indicator. Never used as a fill, never used on large surfaces. |
-| `--rule` | `#e8e4d6` | Hairline 1px rules between list rows. Slightly warm. |
-
-**Dark mode:** Not in scope. The site is light-only by design. The `.dark` CSS variable scope is preserved in `globals.css` so a future toggle is possible without re-architecting.
+| `--muted` | `#6b6b66` | Dates, secondary copy, inactive nav labels. (4.9:1 on bone — AA.) |
+| `--accent` | `#b8470c` | **Surgical use only**: inline links + 1px underline, star ratings, hover on list titles, the active-nav dot. Never a fill. (4.6:1 on bone — AA.) |
+| `--accent-visited` | `#8a3a10` | Visited inline links inside essay prose only. |
+| `--rule` | `#e8e4d6` | Hairline 1px rules between list rows. |
 
 **Link styling rules:**
-- **Inline body links** (`<a>` inside `.site-description`, `.post-content`, `.projects-intro`): `color: var(--accent)`; `border-bottom: 1px solid var(--accent)`; `padding-bottom: 1px`. On hover: `opacity: 0.7`. Never use `text-decoration: underline` for these — use the bottom-border pattern so the underline sits below descenders.
-- **Navigation links**: `color: var(--muted)` by default, `color: var(--text)` on hover and when active. Active link is weight 500.
-- **List-row title links** (post/project titles inside lists): `color: var(--text)` by default, `color: var(--accent)` on parent-row hover.
+- **Inline body links** (`.site-description a`, `.post-content a`, intros, byline): `color: var(--accent)`; `border-bottom: 1px solid var(--accent)`; hover `opacity: 0.7`. Never `text-decoration: underline`.
+- **Prose visited links:** `--accent-visited` (essays are revisited; the distinction helps return readers). Chrome links don't distinguish visited.
+- **Navigation links:** inactive `--muted`, active + hover `--text`, weight 400 always — the dot carries the active state, plus `aria-current="page"`.
+- **List-row title links:** `--text`, `--accent` on row hover; keyboard focus gets the same treatment.
 
 ---
 
 ## Layout
 
-Single centered column. No sidebars, no rails, no asymmetric grids, no cards (except where data structure genuinely needs containment).
+A fixed left rail beside a single centered column. The rail is positioned relative to the **column**, not the viewport.
 
-- **Max content width:** 720px on desktop, full bleed minus padding on mobile.
-- **Wrapper:** `<div class="max-w-[720px] mx-auto px-6 sm:px-8">`. (The current 650px wrapper is fine to keep if it reads better — 650-720px is the acceptable range.)
-- **Vertical rhythm:** 12px on the smallest viewports, 32px on small, 48px on desktop between the navbar and the page heading.
-- **List patterns** (the dominant component on this site): all list pages (posts, projects, books, thoughts) use the same hairline-rule list pattern.
+- **Columns:** 560px max-width (home, lists), 720px (essay pages — media width; prose inside sits at ~640px).
+- **Rail (≥1025px):** fixed, `left: max(24px, calc(50vw - 280px - 160px))` — tracks the column with a 160px gutter, clamps on narrow desktops. `top: 80px`. Vertical stack, 12px gap.
+- **Active indicator:** 6px square in `--accent`, slot always reserved (labels never shift), visible on the active item only. No hover dot.
+- **≤1024px:** the rail becomes a horizontal row above content, same width as the column, **wrapping to two lines if needed** — never horizontal scroll.
+- **A11y:** every nav link ≥44px interactive area (via padding), visible-on-focus skip-to-content link, `:focus-visible` on all links.
+- **List patterns:** text-only hairline-rule rows everywhere. **Writing list:** `[title 15px/500] [date 14px muted]` — no thumbnails, no arrows, no blurbs. Projects/Books/Thoughts keep their existing row anatomies, rebased to the chrome register.
 
-### List patterns
+### Essay page anatomy
 
-**Posts list:** Each row is `[date · 92px column] [title]`. Date is `--muted` at 14px with `tabular-nums`. Title is 17px weight 500. No blurb under the title. No tags visible in the list view (tags appear inside the post itself). One hairline rule between rows; one rule above the first row and one below the last.
-
-**Projects list:** Each row is `[title]  [link]` on the first line, `[description]` on the second. Title is 17px weight 500. Link is 14px in `--accent` with 1px underline. Description is 16px in `--muted`, max-width 62ch. One hairline rule between rows.
-
-**Books list:** Each row is `[title]  [author]  [stars · month-year]` on a single line, right-aligned meta. Stars in `--accent`, month/year in `--muted` with `tabular-nums`. One hairline rule between rows.
-
-**Thoughts list:** Each row is `[thought text]` on top, `[date]` below in `--muted` 13px `tabular-nums`. One hairline rule between rows.
+Hero image (only if the post has a Notion cover: 1.91:1, explicit dimensions, `object-fit: cover`, max-height 360px, 4px radius, hides on load error) → title → muted date + plain-text tag links → prose → **byline footer** ("Prerit Oberai is the co-founder and CTO of Prototyping.io (YC P26)" with accent links, muted scale). The byline is load-bearing: most essay readers arrive from a shared link and never see the nav.
 
 ---
 
 ## Spacing
 
-8px base unit. Comfortable density (not airy, not cramped).
-
-| Token | Value | Use |
-|-------|-------|-----|
-| `2xs` | 2px | Hairlines, icon offsets |
-| `xs` | 4px | Tight padding inside small elements |
-| `sm` | 8px | Inline gaps between adjacent meta items |
-| `md` | 16px | Paragraph spacing, list-row internal padding |
-| `lg` | 24px | Gap between major sections, list-row gap (date column ↔ title) |
-| `xl` | 32px | Body-paragraph spacing in long-form posts |
-| `2xl` | 48px | Section spacing on the home page (between nav, masthead, body, socials) |
-| `3xl` | 64px | Spacing above each page's `<h1>` heading from the navbar |
-
-Section spacing scales with viewport: smaller margins on mobile, generous on desktop.
+8px base unit. | `sm` 8px inline gaps · `md` 16px row padding · `lg` 24px section gaps · `xl` 32px prose paragraph rhythm · `2xl` 48px home sections · `3xl` 64px above page headings. Smaller on mobile.
 
 ---
 
 ## Border radius
 
-Almost none.
-
-| Token | Value | Use |
-|-------|-------|-----|
-| `none` | 0 | Hairline rules, list rows, page sections — the default |
-| `sm` | 4px | Buttons, inputs, the rare card (e.g., `book-card` if we ever bring cards back) |
-| `full` | 9999px | Avatar (if added in the future) |
-
-Never apply uniform bubbly border-radius to everything. Sharp edges separated by hairlines is the system; rounded corners are an exception.
+Almost none. 0 default; 4px for images and the rare contained element; never uniform bubbly radius.
 
 ---
 
 ## Motion
 
-Minimal-functional only.
+One sanctioned entrance, tamed; everything else is 150ms hover transitions.
 
-- **Easing:** `ease` (default browser easing) for all hover transitions. No custom cubic-beziers.
-- **Duration:** 150ms for color, opacity, and border-color transitions on hover. Nothing else animates.
-- **Forbidden:** scroll-driven animations, entrance animations on page load, hero parallax, marquee, ticker, count-up animations, hover scale, hover lift / translateY, gradient sweeps.
-- **Reduced motion:** All hover transitions respect `@media (prefers-reduced-motion: reduce)` by setting `transition: none`.
+- **Entrance:** `fadeInUp` (opacity 0→1, translateY 8px→0, 0.2s ease-out, 50ms stagger, first ~12 children) — **once per session only**, gated via `sessionStorage` + a `motion-done` class on `<html>`. Never on the nav. Never replays on client navigation, filtering, or back-button.
+- **Hover:** color/opacity/border-color at 150ms `ease`. Nothing else animates.
+- **Forbidden:** per-navigation entrance replays, scroll-driven animations, parallax, marquee, count-up, hover scale/lift.
+- **Reduced motion:** `prefers-reduced-motion: reduce` kills all animation and transitions.
 
 ---
 
 ## Iconography
 
-Use **lucide-react** (already installed). Icons are stroke-based at `stroke-width: 1.7`, sized 18-22px depending on context.
-
-- **Social row icons:** 22px, color `var(--muted)`, hover `var(--accent)`. Optional thin border `1px solid var(--rule)` with 4px radius if a more "buttoned" treatment is wanted; otherwise inline.
-- **No filled icons, no colored backgrounds, no badge containers.**
+Almost none. **Social links are plain text** (Email, GitHub, LinkedIn, Calendar) — muted, darkening on hover. lucide-react remains only for the book-rating `Star`. No filled icons, no colored backgrounds, no badge containers.
 
 ---
 
 ## What we explicitly DO NOT do (anti-patterns to flag in review)
 
-- ❌ Cards with shadows or rounded corners on every list row
-- ❌ Numbered indices (`01`, `02`, `03`) before list items
-- ❌ Mono uppercase labels (`POSTS · 04`, `MAY 2026`) on the page itself — `tabular-nums` is enough
-- ❌ Inset color panels behind sections
-- ❌ Gradient backgrounds, gradient buttons, gradient text
-- ❌ Hover scale or hover lift on rows or cards
-- ❌ Centered hero CTAs on the home page (this is a personal site, not a SaaS landing)
-- ❌ Sidebar navigation, hamburger menus (until the page count exceeds ~7), or asymmetric two-column layouts
-- ❌ Profile photos / avatars (not currently used and not needed)
-- ❌ A second font family. One font, three weights. If a serif is ever added, this DESIGN.md must be updated explicitly.
-- ❌ More than one accent color. `--accent` is the only chromatic color in the system.
+- ❌ Cards, shadows, rounded-corner containers on list rows
+- ❌ Thumbnails or arrow glyphs in the writing list (that's the reference site's signature; ours is text)
+- ❌ Numbered indices, mono uppercase labels, inset color panels, gradients
+- ❌ Hover scale / hover lift
+- ❌ Entrance animation replaying on navigation (once per session, or not at all)
+- ❌ Centered hero CTAs
+- ❌ Hamburger menus; horizontal-scrolling nav
+- ❌ A second font family or a second accent color
+- ❌ Body text under 16px on mobile, or essay prose under 17px on desktop
+- ❌ Dark mode (deleted, not dormant — `color-scheme: light` is pinned)
 
 ---
 
@@ -166,7 +140,15 @@ Use **lucide-react** (already installed). Icons are stroke-based at `stroke-widt
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-05-01 | Created DESIGN.md | Locked in via /design-consultation. Reference: thesephist.com (layout) + natural.co memo (typography). Replaces the in-flight muted-blue + decorated approach in PR #4. |
-| 2026-05-01 | Inter for everything; no serif body | User explicitly liked the natural.co sans typography. Inter is the closest free equivalent to STK Miso and is already loaded. Subagent's serif proposal (Newsreader/Fraunces) was rejected as "too much design." |
-| 2026-05-01 | Burnt orange `#b8470c` accent (replaced `#4f5fb9` muted blue) | Ties identity to hardware / forged metal / YC, distinguishes from default blue/violet personal sites. Used surgically only. |
-| 2026-05-01 | No cards on list pages | Hairline rules + content density beats cards for the kind of dense, scannable lists this site needs. Pattern follows thesephist.com. |
+| 2026-05-01 | Created DESIGN.md | Locked via /design-consultation. References: thesephist.com + natural.co memo. |
+| 2026-05-01 | Inter for everything; no serif | Closest free equivalent to the natural.co typography; serif proposal rejected as "too much design." |
+| 2026-05-01 | Burnt orange `#b8470c` accent | Hardware/forged-metal identity; distinguishes from default blue/violet personal sites. |
+| 2026-05-01 | No cards on list pages | Hairline rules + density beat cards for scannable lists. |
+| 2026-07-23 | **Sidebar rail (reverses 2026-05-01 "no sidebars")** | The May rule assumed nav-as-chrome atop a document. Making writing the center changed the job: a fixed quiet rail keeps wayfinding present during long essays without occupying the column. The May rule was right for a bio site; wrong for a writing site. Rail is column-relative (not viewport-glued) and collapses to a wrapping row ≤1024px. |
+| 2026-07-23 | **Two-register type scale: 15px chrome / 17px prose (revises the single 17px scale)** | One size flattened hierarchy — nav, dates, and essays all shouted equally. Small chrome + full-size prose makes essays the loudest thing on the site. Essay size deliberately NOT dropped to the reference's 15px: 95-char lines in a 720px column fail readability; unanimous 4-voice review verdict + user gate decision (UC3). |
+| 2026-07-23 | **Once-per-session fadeInUp (narrow exception to "no entrance animations")** | The May ban targeted portfolio-slop animation. A single quiet entrance per session preserves the reference's felt softness without the replay flicker (the actual slop signal). Per-navigation replay stays forbidden. If in doubt, less motion. |
+| 2026-07-23 | **Text socials replace lucide icons** | Text links match the document register; icon rows read as UI chrome. lucide survives only for book stars. |
+| 2026-07-23 | **Signature divergence from bykahlil.com (gate UC1, "middle path")** | Keep: rail+dot structure, quiet chrome, 560/720 columns, essay anatomy. Reject: thumbnail-arrow list rows, flat handle-row header, exact coordinate cloning. Both review models flagged verbatim cloning of a same-network founder's site as a reputational own-goal; the user chose structure without the fingerprint. |
+| 2026-07-23 | **Dark scope deleted (hardens 2026-05-01 "light-only")** | The dormant `.dark` block caused a real production bug (theme hijacking, PR #6). Light-only is now enforced with `color-scheme: light`, not merely preferred. |
+| 2026-07-23 | **Byline footer on essays** | Conversion moment for direct-link readers; identity is the site's job. |
+| 2026-07-23 | **Domain stays prerit.website** | Gate UC2: no move without evidence of a discoverability problem. |

@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
+import MotionGate from "@/components/MotionGate";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,6 +20,14 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  colorScheme: "light",
+};
+
+// Hard-load half of the once-per-session entrance gate: runs before first
+// paint so a returning visitor never sees the animation replay.
+const motionGateScript = `try{if(sessionStorage.getItem('motion-done'))document.documentElement.classList.add('motion-done')}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: {
@@ -27,12 +36,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className="antialiased">
-        <ThemeProvider>
-          <div className="page-wrapper">
-            <Navbar />
-            <main className="page-main">{children}</main>
-          </div>
-        </ThemeProvider>
+        <script dangerouslySetInnerHTML={{ __html: motionGateScript }} />
+        <a href="#content" className="skip-link">Skip to content</a>
+        <div className="page-wrapper">
+          <Navbar />
+          <main id="content" className="page-main">{children}</main>
+        </div>
+        <MotionGate />
+        <Analytics />
       </body>
     </html>
   );

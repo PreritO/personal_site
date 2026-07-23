@@ -14,7 +14,7 @@ export default async function BooksPage() {
   const books = await getAllBooks()
 
   return (
-    <div className="container">
+    <div className="container fade-seq">
       <h1 className="books-header">Bookshelf</h1>
       <p className="books-intro">Mostly biographies. Always taking recs.</p>
       <BooksList books={books} />

@@ -27,7 +27,7 @@ const projects = [
 
 export default function ProjectsPage() {
   return (
-    <div className="container">
+    <div className="container fade-seq">
       <h1 className="projects-header">Projects</h1>
       <p className="projects-intro">A selection of recent things I&apos;ve built.</p>
       <ul className="projects-list">

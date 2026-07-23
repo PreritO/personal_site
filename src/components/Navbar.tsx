@@ -2,54 +2,37 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Moon, Sun } from 'lucide-react'
-import { useTheme } from '@/components/ThemeProvider'
+
+const items = [
+  { href: '/', label: 'Home', exact: true },
+  { href: '/writing', label: 'Writing' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/books', label: 'Bookshelf' },
+  { href: '/thoughts', label: 'Thoughts' },
+]
 
 export default function Navbar() {
   const pathname = usePathname()
-  const { theme, toggleTheme } = useTheme()
 
   return (
-    <nav className="navbar">
-      <div className="nav-links">
-        <Link 
-          href="/" 
-          className={`nav-link ${pathname === '/' ? 'active' : ''}`}
-        >
-          Home
-        </Link>
-        <Link
-          href="/writing"
-          className={`nav-link ${pathname.startsWith('/writing') ? 'active' : ''}`}
-        >
-          Writing
-        </Link>
-        <Link
-          href="/projects"
-          className={`nav-link ${pathname.startsWith('/projects') ? 'active' : ''}`}
-        >
-          Projects
-        </Link>
-        <Link
-          href="/books"
-          className={`nav-link ${pathname.startsWith('/books') ? 'active' : ''}`}
-        >
-          Bookshelf
-        </Link>
-        <Link 
-          href="/thoughts" 
-          className={`nav-link ${pathname.startsWith('/thoughts') ? 'active' : ''}`}
-        >
-          Random Thoughts
-        </Link>
-      </div>
-      {/* <button
-        onClick={toggleTheme}
-        className="theme-toggle"
-        aria-label="Toggle theme"
-      >
-        {theme === 'dark' ? <Sun className="theme-icon" /> : <Moon className="theme-icon" />}
-      </button> */}
+    <nav className="nav-container" aria-label="Site">
+      {items.map(({ href, label, exact }) => {
+        const active = exact ? pathname === href : pathname.startsWith(href)
+        return (
+          <div key={href} className="nav-item-row">
+            {/* Dot slot is always reserved so labels never shift; the dot is
+                decorative — aria-current carries the state. */}
+            <div className={`active-indicator ${active ? 'visible' : ''}`} aria-hidden="true" />
+            <Link
+              href={href}
+              className={`nav-link ${active ? 'active' : ''}`}
+              aria-current={active ? 'page' : undefined}
+            >
+              {label}
+            </Link>
+          </div>
+        )
+      })}
     </nav>
   )
-} 
+}
