@@ -4,9 +4,11 @@ import { formatDate } from '@/lib/format'
 
 // Presentational rows shared by WritingList and the Suspense fallback, so the
 // fallback renders the identical unfiltered list instead of a blank flash.
-export default function WritingRows({ posts }: { posts: BlogPost[] }) {
+// The fallback renders WITHOUT the entrance-animation class; the hydrated list
+// animates once (session-gated) — so the swap never double-fires the motion.
+export default function WritingRows({ posts, animate = false }: { posts: BlogPost[]; animate?: boolean }) {
   return (
-    <div className="posts-list">
+    <div className={animate ? 'posts-list fade-seq' : 'posts-list'}>
       {posts.map((post) => (
         <article key={post.slug} className="post-row">
           <Link href={`/writing/${post.slug}`} className="post-item">

@@ -1,10 +1,10 @@
 import { getAllPosts, getPostBySlug } from '@/lib/notion'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Tag } from 'lucide-react'
 import { Metadata } from 'next'
 import { formatDate } from '@/lib/format'
 import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '@/lib/site'
+import CoverImage from '@/components/CoverImage'
 
 export const revalidate = process.env.REVALIDATION_TIME_BLOG
   ? parseInt(process.env.REVALIDATION_TIME_BLOG)
@@ -107,20 +107,18 @@ export default async function PostPage({ params }: Props) {
   }
 
   return (
-    <article className="container">
+    <article className="container-wide fade-seq">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }}
       />
+      {post.coverImage && <CoverImage src={post.coverImage} />}
       <header className="post-header">
         <h1 className="post-title">{post.title}</h1>
         <div className="post-meta">
           <time className="post-date" dateTime={post.date}>{formatDate(post.date)}</time>
           {post.categories.length > 0 && (
             <div className="post-tags">
-              <span className="post-tags-label">
-                <Tag size={16} />
-              </span>
               {post.categories.map((category) => (
                 <Link
                   key={category}
@@ -135,9 +133,15 @@ export default async function PostPage({ params }: Props) {
         </div>
       </header>
       <div
-        className="post-content prose max-w-none"
+        className="post-content"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+      <footer className="post-byline">
+        Prerit Oberai is the founder of{' '}
+        <a href="https://www.prototyping.io/" target="_blank" rel="noopener noreferrer">Prototyping.io</a>{' '}
+        (YC P26), an AI-driven manufacturing platform.{' '}
+        <Link href="/">More about Prerit</Link> · <Link href="/writing">More writing</Link>
+      </footer>
     </article>
   )
 }

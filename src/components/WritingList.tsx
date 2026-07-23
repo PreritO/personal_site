@@ -26,5 +26,5 @@ export default function WritingList({ posts }: WritingListProps) {
     )
   }
 
-  return <WritingRows posts={filteredPosts} />
+  return <WritingRows posts={filteredPosts} animate />
 }

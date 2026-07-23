@@ -23,8 +23,8 @@ export default async function ThoughtsPage() {
   }
 
   return (
-    <div className="container">
-      <h1 className="thoughts-header">Random Thoughts</h1>
+    <div className="container fade-seq">
+      <h1 className="thoughts-header">Thoughts</h1>
       <p className="thoughts-intro">A twitter feed without all the bells and whistles.</p>
       {error && (
         <p style={{ color: 'var(--muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>

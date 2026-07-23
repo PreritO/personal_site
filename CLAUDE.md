@@ -18,11 +18,12 @@ Personal site for Prerit Oberai (founder of Prototyping.io, YC P26).
 **Always read `DESIGN.md` before making any visual or UI decisions.** All font choices, colors, spacing, layout rules, and aesthetic direction are defined there. Do not deviate without explicit user approval.
 
 The short version, for context:
-- One font: Inter, three weights (400/500/600). No serif, no display, no mono.
-- One accent color: burnt orange `#b8470c`. Used surgically (inline links, star ratings, hover states, active nav). Never as a fill.
-- Single centered column at 720px max. No cards, no sidebars, no asymmetric grids, no numbered indices, no mono uppercase labels.
-- Hairline rules between list rows. Sharp edges (border-radius 0 or 4px).
-- Light theme only. Soft warm bone background `#faf8f2`, warm near-black text `#1a1a1a`.
+- One font: Inter. Two registers: quiet 15px/24px chrome (nav, lists, meta) and 17px/28px essay prose (~640px measure). Never drop essay prose below 17px desktop / 16px mobile.
+- One accent color: burnt orange `#b8470c`. Used surgically (inline links, star ratings, hover states, the active-nav dot). Never as a fill.
+- Fixed left rail nav (column-relative, wraps to a row ≤1024px) beside a centered column: 560px for home/lists, 720px for essay pages.
+- Text-only hairline-rule list rows — no cards, no thumbnails, no arrows. Sharp edges (radius 0 or 4px).
+- Light only, enforced (`color-scheme: light`, no dark scope). Warm bone `#faf8f2` background, near-black `#1a1a1a` text.
+- Motion: once-per-session fadeInUp entrance (session-gated via `motion-done` class), 150ms hover transitions, nothing else.
 
 When reviewing or writing code, flag anything that conflicts with `DESIGN.md`.
 
