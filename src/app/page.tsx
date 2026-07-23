@@ -17,10 +17,10 @@ export default function Home() {
           I&apos;m currently the co-founder and cto of <a href="https://www.prototyping.io/" target="_blank" rel="noopener noreferrer">Prototyping.io</a> (YC P26), an AI-driven manufacturing platform that analyzes CAD designs for manufacturability and automates production workflows, so engineers get high-quality parts faster and at lower costs.
         </p>
         <p className="site-description">
-          Before this, I was a Founding Engineer at an early-stage startup building patient navigation services for the elderly, and spent a few years at Microsoft on the Excel and Office Security teams. Earlier still: a PhD start at UIUC in network and storage systems (left after a year and a half), and undergrad + masters in EECS at CU Boulder. What ties it together is curiosity — I like hard problems in whatever domain I land in.
+          Before this, I was a Founding Engineer at an early-stage startup building patient navigation services for the elderly, and spent a few years at Microsoft on the Excel and Office Security teams. Earlier still: a PhD start at UIUC in network and storage systems (left after a year and a half), and undergrad + masters in EECS at CU Boulder. What ties it together is curiosity, I like hard problems in whatever domain I land in.
         </p>
         <p className="site-description">
-          Outside of work I&apos;m always excited to meet new people, play basketball and soccer, run, and read a lot of biographies — always taking recs. If you want to reach out, my inbox is open, or <a href="https://cal.com/prerit-oberai/30min" target="_blank" rel="noopener noreferrer">grab time on my calendar</a>.
+          Outside of work I&apos;m always excited to meet new people, play basketball and soccer, run, and read a lot of biographies (always taking recs). If you want to reach out, my inbox is open, or <a href="https://cal.com/prerit-oberai/30min" target="_blank" rel="noopener noreferrer">grab time on my calendar</a>.
         </p>
       </div>
       <div className="social-links">
