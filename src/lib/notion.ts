@@ -282,41 +282,5 @@ export async function getAllBooks(): Promise<Book[]> {
   }
 }
 
-/**
- * Gets the thoughts page's bulleted list items, newest first.
- */
-export async function getThoughtsPage() {
-  const pageId = process.env.NOTION_THOUGHTS_PAGE_ID;
-
-  if (!pageId) {
-    console.error("Missing NOTION_THOUGHTS_PAGE_ID environment variable");
-    return { blocks: [] };
-  }
-
-  try {
-    const blocks = await notion.blocks.children.list({ block_id: pageId });
-    const thoughts = processThoughtBlocks(blocks.results);
-    return {
-      blocks: thoughts.reverse(),
-      lastEditedTime: new Date().toISOString(),
-    };
-  } catch (error) {
-    console.error("Error fetching thoughts page:", error);
-    return { blocks: [] };
-  }
-}
-
-function processThoughtBlocks(blocks: unknown[]) {
-  const thoughts = [];
-  for (const block of blocks as Array<{ id: string; type: string; has_children: boolean; bulleted_list_item?: { rich_text: Array<{ plain_text: string }> } }>) {
-    if (block.type === "bulleted_list_item" && block.bulleted_list_item) {
-      thoughts.push({
-        id: block.id,
-        content: block.bulleted_list_item.rich_text.map((t) => t.plain_text).join(""),
-        hasChildren: block.has_children,
-        children: [],
-      });
-    }
-  }
-  return thoughts;
-}
+// (Thoughts page removed 2026-07 — getThoughtsPage and its block parsing were
+// deleted with it; see git history if the section ever returns.)

@@ -7,9 +7,9 @@ Guidance for Claude Code agents working in this repo.
 Personal site for Prerit Oberai (co-founder and CTO of Prototyping.io, YC P26).
 
 - **Stack:** Next.js 14 App Router, Tailwind, TypeScript
-- **Content:** Notion-backed (`src/lib/notion.ts`); requires `NOTION_API_KEY`, `NOTION_BLOG_DATABASE_ID`, `NOTION_BOOKS_DATABASE_ID`, `NOTION_THOUGHTS_PAGE_ID` to build locally
+- **Content:** Notion-backed (`src/lib/notion.ts`); requires `NOTION_API_KEY`, `NOTION_BLOG_DATABASE_ID`, `NOTION_BOOKS_DATABASE_ID` to build locally
 - **Deploy:** Vercel (auto-deploys on merge to `main`); the `.github/workflows/deploy.yml.disabled` GitHub Pages workflow is intentionally disabled. Vercel's build is the only CI gate.
-- **Pages:** `/` (home / bio), `/writing` (+ `/writing/[slug]`; old `/posts` URLs 308-redirect), `/projects`, `/books`, `/thoughts`; `/feed.xml`, `/sitemap.xml`
+- **Pages:** `/` (home / bio), `/writing` (+ `/writing/[slug]`; old `/posts` URLs 308-redirect), `/books`; `/feed.xml`, `/sitemap.xml`. (`/thoughts` and `/projects` removed 2026-07; they 307-redirect home.)
 - **Images:** Notion-hosted images expire after ~1h, so pages never embed signed URLs — everything goes through `/api/notion-image/{pageId}[/{blockId}]` (streaming proxy, published-posts only). External-URL images bypass the proxy.
 - **Canonical origin:** `SITE_URL` in `src/lib/site.ts` — the single place the domain lives.
 

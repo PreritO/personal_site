@@ -8,7 +8,7 @@
 
 - **What this is:** Personal site / blog for Prerit Oberai, co-founder and CTO of Prototyping.io (YC P26). Writing-first: the site exists to publish essays and say who Prerit is.
 - **Who it's for:** Fellow founders, investors, candidates, customers, and his network.
-- **Project type:** Personal site with editorial sections (home, writing, projects, bookshelf, thoughts).
+- **Project type:** Personal site with editorial sections (home, writing, bookshelf). Projects and Thoughts were removed 2026-07 — fewer, stronger sections.
 - **Stack:** Next.js 14 (App Router) + Tailwind, Notion-backed content, deployed on Vercel.
 - **Audience expectation:** Substance over polish. Reads quickly, leaves the visitor with a clear sense of who Prerit is and what he's building.
 
@@ -80,11 +80,11 @@ Restrained palette. One accent. Warm neutrals. **Light only** — `color-scheme:
 A fixed left rail beside a single centered column. The rail is positioned relative to the **column**, not the viewport.
 
 - **Columns:** 560px max-width (home, lists), 720px (essay pages — media width; prose inside sits at ~640px).
-- **Rail (≥1025px):** fixed, `left: max(24px, calc(50vw - 280px - 160px))` — tracks the column with a 160px gutter, clamps on narrow desktops. `top: 80px`. Vertical stack, 12px gap.
+- **Rail (≥1025px):** fixed, `left: max(24px, calc(50vw - 360px - 160px))` — anchored to the **wide (720px) column's** left edge with a 160px gutter (anchoring to the 560px column overlapped essay pages), clamps on narrow desktops, identical position on every page. `top: 80px`. Vertical stack, 12px gap.
 - **Active indicator:** 6px square in `--accent`, slot always reserved (labels never shift), visible on the active item only. No hover dot.
 - **≤1024px:** the rail becomes a horizontal row above content, same width as the column, **wrapping to two lines if needed** — never horizontal scroll.
 - **A11y:** every nav link ≥44px interactive area (via padding), visible-on-focus skip-to-content link, `:focus-visible` on all links.
-- **List patterns:** text-only hairline-rule rows everywhere. **Writing list:** `[title 15px/500] [date 14px muted]` — no thumbnails, no arrows, no blurbs. Projects/Books/Thoughts keep their existing row anatomies, rebased to the chrome register.
+- **List patterns:** text-only hairline-rule rows everywhere. **Writing list:** `[title 15px/500] [date 14px muted]` — no thumbnails, no arrows, no blurbs. **Books** keeps its row anatomy (title · author · stars/date), rebased to the chrome register.
 
 ### Essay page anatomy
 
@@ -152,3 +152,5 @@ Almost none. **Social links are plain text** (Email, GitHub, LinkedIn, Calendar)
 | 2026-07-23 | **Dark scope deleted (hardens 2026-05-01 "light-only")** | The dormant `.dark` block caused a real production bug (theme hijacking, PR #6). Light-only is now enforced with `color-scheme: light`, not merely preferred. |
 | 2026-07-23 | **Byline footer on essays** | Conversion moment for direct-link readers; identity is the site's job. |
 | 2026-07-23 | **Domain stays prerit.website** | Gate UC2: no move without evidence of a discoverability problem. |
+| 2026-07-24 | **Projects and Thoughts sections removed** | User call, post-launch: fewer, stronger sections. Nav is Home / Writing / Bookshelf. Old URLs 307-redirect home (temporary — becomes permanent if the removal sticks). Echoes the review's nav-hierarchy critique: a permanent rail slot is a claim that a section matters. |
+| 2026-07-24 | **Rail anchored to the 720px column (fixes overlap)** | The 560px-anchored formula put the rail inside essay text on wide viewports. Anchoring to the wide column gives essays the full 160px gutter and a page-independent rail position. |

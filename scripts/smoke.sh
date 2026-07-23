@@ -32,9 +32,11 @@ status() { curl -s -o /dev/null -w "%{http_code}" ${CURL_ARGS[@]+"${CURL_ARGS[@]
 check "GET /"          200 "$(status "$BASE/")"
 check "GET /writing"   200 "$(status "$BASE/writing")"
 check "GET /books"     200 "$(status "$BASE/books")"
-check "GET /thoughts"  200 "$(status "$BASE/thoughts")"
-check "GET /projects"  200 "$(status "$BASE/projects")"
 check "GET /nope-404"  404 "$(status "$BASE/definitely-not-a-page")"
+
+# Removed sections redirect home (temporary 307s)
+check "/thoughts redirect" 307 "$(status "$BASE/thoughts")"
+check "/projects redirect" 307 "$(status "$BASE/projects")"
 
 # Redirects: permanent:true emits 308, and Location must point at /writing
 check "/posts redirect code" 308 "$(status "$BASE/posts")"
